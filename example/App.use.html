@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>App.use</title>
+</head>
+
+<body>
+    <div id="app">
+        <h2> <span>{{pinia.number}}</span>-{{pinia.hello}}-{{pinia.world}}</h2>
+        <h2>{{pinia.ten}}</h2>
+        <h2> {{number}}</h2>
+        <button @click="pinia.add()">Change Number</button>
+        <button @click="pinia.$reset()">Reset Number</button>
+        <h2> {{pinia2.pinia}}</h2>
+        <button @click="pinia2.add2()">Change Number</button>
+        <br />
+        <button @click="stopWatchStore()">Stop Watch Store</button>
+    </div>
+
+    <script type="module">
+        import { createPinia, defineStore, storeToRefs, } from '../pinia/index.js';
+        import { createApp, ref } from "../src/index.js"
+        const store = createPinia()
+        const appStore = defineStore({
+            id: 'piniaStore',
+            state: () => ({
+                number: 1,
+                hello: 'hello',
+                world: 'world'
+            }),
+            actions: {
+                add() {
+                    return this.number++
+                }
+            },
+            getters: {
+                ten: (state) => state.number * 10
+            }
+        })
+        const piniaStore = defineStore({
+            id: 'piniaStore2',
+            state: () => ({
+                pinia: 123
+            }),
+            actions: {
+                add2() {
+                    appStore().number++
+                    return this.pinia++
+                }
+            }
+        })
+        const app = createApp({
+            setup() {
+                const pinia = appStore()
+                const pinia2 = piniaStore()
+
+                // 数据会失去响应式:
+                // const hello = appStore().hello
+                // const { hello } = appStore()
+
+                // 数据恢复响应式
+                const { number } = storeToRefs(pinia)
+                // 监听 store 值变化
+                const subscribe = pinia.$subscribe((_, b) => {
+                    localStorage.setItem('pinia', JSON.stringify({ ...b }))
+                })
+                // 停止监听
+                const stopWatchStore = () => subscribe()
+                // localStorage 数据持久化
+                let a = localStorage.getItem('pinia')
+                if (a) pinia.$state = JSON.parse(a)
+                return {
+                    pinia, number, pinia2, stopWatchStore
+                }
+            }
+        }).use(store).mount('#app')
+        console.log(store)
+    </script>
+</body>
+
+</html>

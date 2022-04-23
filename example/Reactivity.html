@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reactivity</title>
+</head>
+
+<body>
+    <div id="app">
+        <h2>{{number}}</h2>
+        <h2>{{stateComputed}}</h2>
+        <button @click="changeState">Change Number</button>
+    </div>
+    <script type="module">
+        import { createApp, ref, reactive, computed, watch, toRefs } from '../src/index.js';
+        createApp({
+            setup() {
+                const state = reactive({
+                    number: 123
+                })
+                const stateComputed = computed(() => state.number + '元')
+                const changeState = () => {
+                    state.number = Math.floor(state.number + Math.random() * 10000) / 100
+                }
+                watch(state, () => { console.log(state.number) })
+                return { ...toRefs(state), changeState, stateComputed }
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>
