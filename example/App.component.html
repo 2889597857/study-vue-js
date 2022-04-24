@@ -17,7 +17,8 @@
 </head>
 
 <body>
-
+    <transition name="fade">
+    </transition>
     <div id="app">
         <h1 @click="changeComponent()">父组件：App.component</h1>
         <button-counter
@@ -25,26 +26,30 @@
             :title="components"
             @change-component="changeComponent"
         ></button-counter>
-        <transition name="fade">
-            <component :is="components"></component>
-        </transition>
+        <component-c></component-c>
+        <component :is="components"></component>
     </div>
     <script type="module">
-        import {createApp, ref} from "../src/index.js"
+        import { createApp, ref } from "../src/index.js"
+        // import { createApp, ref } from "../vue.global.js"
         const componentA = {
             template: '<h1>Component A</h1>'
         }
         const componentB = {
             template: '<h1>Component B</h1>'
         }
+        const componentC = {
+            components: { componentA, componentB },
+            template: `<h1>Component C</h1><component-a></component-c><component-b></component-c>`
+        }
         const app = createApp({
-            components: {componentA, componentB},
+            components: { componentA, componentB, componentC },
             setup() {
                 const components = ref('componentA')
                 const changeComponent = () => {
                     components.value = components.value == 'componentA' ? 'componentB' : 'componentA'
                 }
-                return {components, changeComponent}
+                return { components, changeComponent }
             },
         })
 
@@ -56,7 +61,7 @@
                 }
             },
             emits: ['changeComponent'],
-            setup(prop, {emit}) {
+            setup(prop, { emit }) {
                 const count = ref(0)
                 const change = () => {
                     count.value++

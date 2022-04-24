@@ -13,7 +13,9 @@ export function resolveComponent (name, maybeSelfReference) {
 export const NULL_DYNAMIC_COMPONENT = Symbol()
 
 /**
- * @private
+ *
+ * @param {*} component 组件名称
+ * @returns
  */
 export function resolveDynamicComponent (component) {
   if (isString(component)) {

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Study vue",
   "main": "/src/index.js",
+  "type": "module",
   "scripts": {
     "build": "webpack --config build/webpack.common.js"
   },

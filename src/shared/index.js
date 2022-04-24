@@ -61,6 +61,11 @@ export const NOOP = () => {}
 export const NO = () => false
 export const onRE = /^on[^a-z]/
 export const isOn = key => onRE.test(key)
+/**
+ * 判断字符串是不是以 ’onUpdate:‘ 开头
+ * @param {*} key
+ * @returns
+ */
 export const isModelListener = key => key.startsWith('onUpdate:')
 /**
  * 移除数组的某个元素
@@ -95,6 +100,11 @@ export const getGlobalThis = () => {
         : {})
   )
 }
+/**
+ * 执行数组内函数
+ * @param {Array} fns
+ * @param {param} arg
+ */
 export const invokeArrayFns = (fns, arg) => {
   for (let i = 0; i < fns.length; i++) {
     fns[i](arg)
@@ -117,6 +127,11 @@ export const toNumber = val => {
   const n = parseFloat(val)
   return isNaN(n) ? val : n
 }
+/**
+ * 字符串缓存
+ * @param {*} fn
+ * @returns
+ */
 export const cacheStringFunction = fn => {
   const cache = Object.create(null)
   return str => {
@@ -124,20 +139,33 @@ export const cacheStringFunction = fn => {
     return hit || (cache[str] = fn(str))
   }
 }
-
+/**
+ * 正则表达式,
+ * 匹配’-‘加任意阿拉伯数字、英文字母大小写和下划线
+ * ’-a1‘
+ */
 export const camelizeRE = /-(\w)/g
+/**
+ *  连字符 - 转驼峰  on-click => onClick
+ */
 export const camelize = cacheStringFunction(str => {
   return str.replace(camelizeRE, (_, c) => (c ? c.toUpperCase() : ''))
 })
 const hyphenateRE = /\B([A-Z])/g
+/**
+ * onClick => on-click
+ */
 export const hyphenate = cacheStringFunction(str =>
   str.replace(hyphenateRE, '-$1').toLowerCase()
 )
+/**
+ * 首字母大写
+ */
 export const capitalize = cacheStringFunction(
   str => str.charAt(0).toUpperCase() + str.slice(1)
 )
 /**
- *
+ * click => onClick
  */
 export const toHandlerKey = cacheStringFunction(str =>
   str ? `on${capitalize(str)}` : ``

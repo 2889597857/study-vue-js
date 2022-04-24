@@ -161,7 +161,7 @@ function _createVNode (
 ) {
   // 初始化
   // type:{template,setup}
-
+  console.log(type)
   if (!type) {
     type = Comment
   }

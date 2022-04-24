@@ -166,6 +166,7 @@ export const setCurrentInstance = instance => {
 }
 
 export const unsetCurrentInstance = () => {
+  // 取消数据响应式效果
   currentInstance && currentInstance.scope.off()
   currentInstance = null
 }
@@ -262,6 +263,7 @@ function finishComponentSetup (instance) {
         // console.log(Component.render)
       }
     }
+    console.log(instance)
     instance.render = Component.render || NOOP
     if (installWithProxy) {
       installWithProxy(instance)

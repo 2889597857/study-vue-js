@@ -9,7 +9,7 @@ import {
 import { isOn, isModelListener } from '../shared/index.js'
 import { isEmitListener } from './componentEmits.js'
 import { setCurrentRenderingInstance } from './componentRenderContext.js'
-
+window.a = new Map()
 export function renderComponentRoot (instance) {
   const {
     type: Component,
@@ -45,6 +45,9 @@ export function renderComponentRoot (instance) {
           ctx
         )
       )
+      // console.log(proxyToUse)
+      window.a.set(result)
+      console.log(result)
       fallthroughAttrs = attrs
     } else {
       const render = Component
