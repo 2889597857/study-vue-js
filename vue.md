@@ -31,3 +31,63 @@ resolveDynamicComponent
 
 ### vnode instance 和 render函数渲染结果
 
+
+
+### ReactiveEffect
+
+ 在四个地方被调用
+
+1.  setupRenderEffect()
+
+   创建组件更新函数，一定会执行。
+
+   ```js
+   const effect = (instance.effect = new ReactiveEffect(
+       componentUpdateFn,
+       () => queueJob(instance.update),
+       instance.scope
+   ))
+   ```
+
+2.  ComputedRefImpl
+
+   创建computed时才会被调用
+
+   ```js
+   const Num = computed(()=>{})
+   ```
+
+   ```js
+   this.effect = new ReactiveEffect(getter, () => {
+       if (!this._dirty) {
+           this._dirty = true
+           triggerRefValue(this)
+       }
+   })
+   ```
+
+3. doWatch
+
+   使用watch时才会被调用
+
+   ```js
+   watch(()=>{},()=>{})
+   ```
+
+   ```js
+   const effect = new ReactiveEffect(getter, scheduler)
+   ```
+
+4. effect
+
+   ```js
+    const _effect = new ReactiveEffect(fn)
+   ```
+
+   
+
+
+
+1. 如何确保 
+2.  
+3. 

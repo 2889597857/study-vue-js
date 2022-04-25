@@ -10,9 +10,10 @@ const rendererOptions = extend({ patchProp }, nodeOps)
 
 let renderer
 function ensureRenderer () {
-  // return renderer
   return renderer || (renderer = createRenderer(rendererOptions))
 }
+// 配合 h 函数
+export const render = (...args) => ensureRenderer().render(...args)
 
 export const createApp = (...args) => {
   const app = ensureRenderer().createApp(...args)
@@ -23,7 +24,7 @@ export const createApp = (...args) => {
   // 重写mount,完善web平台渲染逻辑
   app.mount = containerOrSelector => {
     // 传入的可能是 class/id (#app .app)
-    // 也可能是
+    // 也可能是 DOM 节点
     const container = normalizeContainer(containerOrSelector)
     if (!container) return
     const component = app._component

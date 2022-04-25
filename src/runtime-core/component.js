@@ -263,7 +263,7 @@ function finishComponentSetup (instance) {
         // console.log(Component.render)
       }
     }
-    console.log(instance)
+    // console.log(instance)
     instance.render = Component.render || NOOP
     if (installWithProxy) {
       installWithProxy(instance)

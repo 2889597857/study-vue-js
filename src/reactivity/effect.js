@@ -6,7 +6,7 @@ import {
   newTracked,
   wasTracked
 } from './dep.js'
-import { EffectScope, recordEffectScope } from './effectScope.js'
+import { recordEffectScope } from './effectScope.js'
 /**
  *
  */
@@ -22,6 +22,7 @@ let effectTrackDepth = 0
 export let trackOpBit = 1
 /**
  * effect 最大标记位数
+ * 二进制数最多 30 位
  */
 const maxMarkerBits = 30
 // 当前激活的（栈顶） effect
@@ -49,12 +50,20 @@ export class ReactiveEffect {
     if (!this.active) {
       return this.fn()
     }
+    // 第一层 activeEffect = undefined
+    // 第二层 activeEffect = 第一层的 activeEffect
+    // 依次类推
     let parent = activeEffect
     let lastShouldTrack = shouldTrack
+    // 只有一层，parent = undefined ,while不执行。
+    // 二层，执行一次。
+    console.log(activeEffect)
     while (parent) {
       if (parent === this) {
+        console.log('parent === this')
         return
       }
+
       parent = parent.parent
     }
     try {
@@ -62,7 +71,9 @@ export class ReactiveEffect {
       activeEffect = this
       shouldTrack = true
       // 给每一层的 effect 做标记
+      // 2 4 8 16 32
       trackOpBit = 1 << ++effectTrackDepth
+      console.log(trackOpBit)
       if (effectTrackDepth <= maxMarkerBits) {
         // 给之前收集到的依赖打上旧标记
         initDepMarkers(this)
@@ -76,6 +87,8 @@ export class ReactiveEffect {
       }
       // 恢复到上一级
       trackOpBit = 1 << --effectTrackDepth
+      // activeEffect 还原成上一层的 activeEffect
+      // 只有一层。activeEffect = undefined
       activeEffect = this.parent
       shouldTrack = lastShouldTrack
       this.parent = undefined
@@ -138,13 +151,16 @@ export function resetTracking () {
   shouldTrack = last === undefined ? true : last
 }
 /**
- * 收集依赖
+ * 收集对象哪些值被使用了
  * @param {*} target
  * @param {*} _type
  * @param {*} key
  */
 export function track (target, _type, key) {
   if (shouldTrack && activeEffect) {
+    console.log(target)
+    console.log(key)
+    console.log('触发get')
     // 对象建立了 targetMap
     let depsMap = targetMap.get(target)
     if (!depsMap) {
@@ -157,6 +173,10 @@ export function track (target, _type, key) {
     trackEffects(dep)
   }
 }
+/**
+ * 被使用的属性和activeEffect(一般情况下为组件跟新函数)建立联系
+ * @param {*} dep
+ */
 export function trackEffects (dep) {
   let shouldTrack = false
   if (effectTrackDepth <= maxMarkerBits) {

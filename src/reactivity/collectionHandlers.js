@@ -1,4 +1,6 @@
-import { trigger } from './effect.js'
+import { trigger, track } from './effect.js'
+import { toReactive, toReadonly } from './reactive.js'
+
 const toShallow = value => value
 const getProto = v => Reflect.getPrototypeOf(v)
 function get (target, key, isReadonly = false, isShallow = false) {
