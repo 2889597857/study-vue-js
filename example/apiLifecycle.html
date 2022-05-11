@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>ApiLifecycle</title>
+</head>
+
+<body>
+    <div id="app">
+        <h2>{{title}}</h2>
+
+    </div>
+    <script type="module">
+        import { createApp, ref, onMounted } from '../src/index.js';
+        createApp({
+            setup() {
+                onMounted(() => { console.log(123) })
+                const title = ref('apiLifecycle')
+                return {
+                    title
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>

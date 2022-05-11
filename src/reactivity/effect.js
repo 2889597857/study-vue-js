@@ -57,10 +57,10 @@ export class ReactiveEffect {
     let lastShouldTrack = shouldTrack
     // 只有一层，parent = undefined ,while不执行。
     // 二层，执行一次。
-    console.log(activeEffect)
+    // console.log(activeEffect)
     while (parent) {
       if (parent === this) {
-        console.log('parent === this')
+        // console.log('parent === this')
         return
       }
 
@@ -73,7 +73,7 @@ export class ReactiveEffect {
       // 给每一层的 effect 做标记
       // 2 4 8 16 32
       trackOpBit = 1 << ++effectTrackDepth
-      console.log(trackOpBit)
+      // console.log(trackOpBit)
       if (effectTrackDepth <= maxMarkerBits) {
         // 给之前收集到的依赖打上旧标记
         initDepMarkers(this)

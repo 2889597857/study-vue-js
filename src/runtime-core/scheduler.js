@@ -153,6 +153,7 @@ export function flushPreFlushCbs (seen, parentJob = null) {
     currentPreFlushParentJob = parentJob
     // 执行前去重
     activePreFlushCbs = [...new Set(pendingPreFlushCbs)]
+    // 清空队列
     pendingPreFlushCbs.length = 0
 
     for (
@@ -160,8 +161,10 @@ export function flushPreFlushCbs (seen, parentJob = null) {
       preFlushIndex < activePreFlushCbs.length;
       preFlushIndex++
     ) {
+      // 执行任务函数
       activePreFlushCbs[preFlushIndex]()
     }
+    // 任务执行完，清空队列
     activePreFlushCbs = null
     preFlushIndex = 0
     currentPreFlushParentJob = null
@@ -176,6 +179,7 @@ export function flushPostFlushCbs () {
   if (pendingPostFlushCbs.length) {
     // 执行前去重
     const deduped = [...new Set(pendingPostFlushCbs)]
+    console.log(deduped)
     pendingPostFlushCbs.length = 0
     if (activePostFlushCbs) {
       activePostFlushCbs.push(...deduped)
@@ -196,7 +200,7 @@ export function flushPostFlushCbs () {
   }
 }
 /**
- * 执行queue队列
+ * 获取组件更新函数 id
  */
 const getId = job => (job.id == null ? Infinity : job.id)
 /**
@@ -211,12 +215,13 @@ function flushJobs () {
 
   // 按照id从小到大进行排序
   // 组件更新从父级到子级
-  // 父组件更新期间卸载了组件,可以跳过跟新
+  // 父组件更新期间卸载了组件,可以跳过子组件更新
   queue.sort((a, b) => getId(a) - getId(b))
   try {
     for (flushIndex = 0; flushIndex < queue.length; flushIndex++) {
       const job = queue[flushIndex]
       if (job && job.active !== false) {
+        // 执行组件更新函数
         job()
       }
     }
