@@ -44,41 +44,41 @@ const shallowReadonlyGet = createGetter(true, true)
 
 //
 const arrayInstrumentations = createArrayInstrumentations()
-function createArrayInstrumentations () {
+function createArrayInstrumentations() {
   const instrumentations = {}
-  // 查询遍历方法
-  ;[('includes', 'indexOf', 'lastIndexOf')].forEach(key => {
-    instrumentations[key] = function (...args) {
-      // 获取源数据
-      const arr = toRaw(this)
-      // 数组每一项都收集依赖
-      for (let i = 0, l = this.length; i < l; i++) {
-        track(arr, 'get', i + '')
-      }
-      // [].includes() / [].indexOf / [].lastIndexOf()
-      const res = arr[key](...args)
+    // 查询遍历方法
+    ;[('includes', 'indexOf', 'lastIndexOf')].forEach(key => {
+      instrumentations[key] = function (...args) {
+        // 获取源数据
+        const arr = toRaw(this)
+        // 数组每一项都收集依赖
+        for (let i = 0, l = this.length; i < l; i++) {
+          track(arr, 'get', i + '')
+        }
+        // [].includes() / [].indexOf / [].lastIndexOf()
+        const res = arr[key](...args)
 
-      // 参数有可能是响应式的，函数执行后返回值为 -1 或 false，那就用参数的原始值再试一遍
-      if (res === -1 || res === false) {
-        // 没有查询到对应的值，有可能是包装后的响应式数据，有wrapper，引用不同所以
-        // 有可能查不到，尝试去掉wrapper再查询
-        return arr[key](...args.map(toRaw))
-      } else {
+        // 参数有可能是响应式的，函数执行后返回值为 -1 或 false，那就用参数的原始值再试一遍
+        if (res === -1 || res === false) {
+          // 没有查询到对应的值，有可能是包装后的响应式数据，有wrapper，引用不同所以
+          // 有可能查不到，尝试去掉wrapper再查询
+          return arr[key](...args.map(toRaw))
+        } else {
+          return res
+        }
+      }
+    })
+    // 改变数组长度的方法
+    ;['push', 'pop', 'shift', 'unshift', 'splice'].forEach(key => {
+      instrumentations[key] = function (...args) {
+        // 执行前禁用依赖收集
+        pauseTracking()
+        const res = toRaw(this)[key].apply(this, args)
+        // 执行后恢复之前track状态
+        resetTracking()
         return res
       }
-    }
-  })
-  // 改变数组长度的方法
-  ;['push', 'pop', 'shift', 'unshift', 'splice'].forEach(key => {
-    instrumentations[key] = function (...args) {
-      // 执行前禁用依赖收集
-      pauseTracking()
-      const res = toRaw(this)[key].apply(this, args)
-      // 执行后恢复之前track状态
-      resetTracking()
-      return res
-    }
-  })
+    })
   return instrumentations
 }
 
@@ -88,8 +88,8 @@ function createArrayInstrumentations () {
  * @param {*} shallow 浅代理
  * @returns get
  */
-function createGetter (isReadonly = false, shallow = false) {
-  return function get (target, key, receiver) {
+function createGetter(isReadonly = false, shallow = false) {
+  return function get(target, key, receiver) {
     // 访问对应标志位的处理逻辑 obj['__v_isReactive']
     if (key === '__v_isReactive') {
       return !isReadonly
@@ -101,14 +101,14 @@ function createGetter (isReadonly = false, shallow = false) {
       // 如果访问的 key 是 __v_raw，并且 receiver == target.__v_readonly || receiver == target.__v_reactive
       key === '__v_raw' &&
       receiver ===
-        (isReadonly
-          ? shallow
-            ? shallowReadonlyMap
-            : readonlyMap
-          : shallow
+      (isReadonly
+        ? shallow
+          ? shallowReadonlyMap
+          : readonlyMap
+        : shallow
           ? shallowReactiveMap
           : reactiveMap
-        ).get(target)
+      ).get(target)
       // receiver指向调用者，这里的判断是为了保证触发拦截handler的是proxy对象本身
       // 而非proxy的继承者。触发拦截器的两种途径：1.访问proxy对象本身的属性；2.访问
       // 访问对象原型链上有proxy对象的对象的属性，因为查询属性会沿着原型链向下游依次
@@ -154,8 +154,8 @@ function createGetter (isReadonly = false, shallow = false) {
 const set = createSetter()
 const shallowSet = createSetter(true)
 
-function createSetter (shallow = false) {
-  return function set (target, key, value, receiver) {
+function createSetter(shallow = false) {
+  return function set(target, key, value, receiver) {
     let oldValue = target[key]
     if (isReadonly(oldValue) && isRef(oldValue) && !isRef(value)) {
       return false
@@ -195,7 +195,7 @@ function createSetter (shallow = false) {
     return result
   }
 }
-function deleteProperty (target, key) {
+function deleteProperty(target, key) {
   const hadKey = hasOwn(target, key)
   const oldValue = target[key]
   const result = Reflect.deleteProperty(target, key)
@@ -204,14 +204,14 @@ function deleteProperty (target, key) {
   }
   return result
 }
-function has (target, key) {
+function has(target, key) {
   const result = Reflect.has(target, key)
   if (!isSymbol(key) || !builtInSymbols.has(key)) {
     track(target, 'has', key)
   }
   return result
 }
-function ownKeys (target) {
+function ownKeys(target) {
   track(target, 'iterate', isArray(target) ? 'length' : ITERATE_KEY)
   return Reflect.ownKeys(target)
 }
@@ -220,10 +220,10 @@ function ownKeys (target) {
 export const mutableHandlers = { get, set, deleteProperty, has, ownKeys }
 export const readonlyHandlers = {
   get: readonlyGet,
-  set (target, key) {
+  set(target, key) {
     return true
   },
-  deleteProperty (target, key) {
+  deleteProperty(target, key) {
     return true
   }
 }

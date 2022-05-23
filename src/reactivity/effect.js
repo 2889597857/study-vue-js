@@ -25,12 +25,12 @@ export let trackOpBit = 1
  * 二进制数最多 30 位
  */
 const maxMarkerBits = 30
-// 当前激活的（栈顶） effect
+// 当前激活的 effect
 export let activeEffect
 export const ITERATE_KEY = Symbol('iterate')
 export const MAP_KEY_ITERATE_KEY = Symbol('Map key iterate')
 export class ReactiveEffect {
-  constructor (fn, scheduler = null, scope) {
+  constructor(fn, scheduler = null, scope) {
     this.fn = fn
     // scheduler 调度函数，初次挂载不会执行。
     // 组件更新时 scheduler 存在，执行 scheduler
@@ -40,28 +40,23 @@ export class ReactiveEffect {
     this.active = true
     this.deps = []
     this.parent = undefined
+
     recordEffectScope(this, scope)
-    // console.log(scope)
   }
   // 函数初次挂载执行 run
   // const update = (instance.update = effect.run.bind(effect))
   // update()
-  run () {
+  run() {
     if (!this.active) {
       return this.fn()
     }
-    // 第一层 activeEffect = undefined
-    // 第二层 activeEffect = 第一层的 activeEffect
-    // 依次类推
+    // 第一层时 activeEffect = undefined
+    // 第二层时 activeEffect = 第一层的 activeEffect
     let parent = activeEffect
     let lastShouldTrack = shouldTrack
     // 只有一层，parent = undefined ,while不执行。
-
-    // 二层，执行一次。
-    // console.log(activeEffect)
     while (parent) {
       if (parent === this) {
-        // console.log('parent === this')
         return
       }
       parent = parent.parent
@@ -87,7 +82,6 @@ export class ReactiveEffect {
       }
       // 恢复到上一级
       trackOpBit = 1 << --effectTrackDepth
-      console.log(trackOpBit)
       // activeEffect 还原成上一层的 activeEffect
       // 只有一层。activeEffect = undefined
       activeEffect = this.parent
@@ -95,7 +89,7 @@ export class ReactiveEffect {
       this.parent = undefined
     }
   }
-  stop () {
+  stop() {
     if (this.active) {
       cleanupEffect(this)
       if (this.onStop) {
@@ -106,7 +100,7 @@ export class ReactiveEffect {
   }
 }
 
-function cleanupEffect (effect) {
+function cleanupEffect(effect) {
   const { deps } = effect
   if (deps.length) {
     for (let i = 0; i < deps.length; i++) {
@@ -115,7 +109,7 @@ function cleanupEffect (effect) {
     deps.length = 0
   }
 }
-export function effect (fn, options) {
+export function effect(fn, options) {
   if (fn.effect) {
     fn = fn.effect.fn
   }
@@ -132,7 +126,7 @@ export function effect (fn, options) {
   runner.effect = _effect
   return runner
 }
-export function stop (runner) {
+export function stop(runner) {
   runner.effect.stop()
 }
 export let shouldTrack = true
@@ -140,24 +134,24 @@ const trackStack = []
 /**
  * 暂停收集依赖
  */
-export function pauseTracking () {
+export function pauseTracking() {
   trackStack.push(shouldTrack)
   shouldTrack = false
 }
 /**
  * 重新收集依赖
  */
-export function resetTracking () {
+export function resetTracking() {
   const last = trackStack.pop()
   shouldTrack = last === undefined ? true : last
 }
 /**
  * 收集对象哪些值被使用了
- * @param {*} target
+ * @param {object} target
  * @param {*} _type
  * @param {*} key
  */
-export function track (target, _type, key) {
+export function track(target, _type, key) {
   if (shouldTrack && activeEffect) {
     // 对象建立了 targetMap
     let depsMap = targetMap.get(target)
@@ -172,10 +166,10 @@ export function track (target, _type, key) {
   }
 }
 /**
- * 被使用的属性和activeEffect(一般情况下为组件跟新函数)建立联系
+ * 被使用的属性和activeEffect(一般情况下为组件跟更函数)建立联系
  * @param {*} dep
  */
-export function trackEffects (dep) {
+export function trackEffects(dep) {
   let shouldTrack = false
   if (effectTrackDepth <= maxMarkerBits) {
     if (!newTracked(dep)) {
@@ -188,20 +182,27 @@ export function trackEffects (dep) {
     shouldTrack = !dep.has(activeEffect)
   }
   if (shouldTrack) {
+    // 手机依赖
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
   }
 }
+
+/**
+ * @param { string } type
+ * add
+ */
+
 /**
  * 触发依赖
  * @param { object } target
  * @param { string } type
- * @param {*} key
+ * @param {string} key
  * @param {*} newValue
  * @param {*} oldValue
  * @param {*} oldTarget
  */
-export function trigger (target, type, key, newValue) {
+export function trigger(target, type, key, newValue) {
   const depsMap = targetMap.get(target)
   if (!depsMap) return
   let deps = []
@@ -214,6 +215,7 @@ export function trigger (target, type, key, newValue) {
       }
     })
   } else {
+    // key 不等于 undefined
     if (key !== void 0) {
       deps.push(depsMap.get(key))
     }
@@ -257,7 +259,7 @@ export function trigger (target, type, key, newValue) {
     triggerEffects(createDep(effects))
   }
 }
-export function triggerEffects (dep) {
+export function triggerEffects(dep) {
   for (const effect of isArray(dep) ? dep : [...dep]) {
     if (effect !== activeEffect || effect.allowRecurse) {
       if (effect.scheduler) {

@@ -1,8 +1,5 @@
-// These tag configs are shared between compiler-dom and runtime-dom, so they
-// must be extracted in shared to avoid creating a dependency between the two.
 import { makeMap } from './makeMap.js'
 
-// https://developer.mozilla.org/en-US/docs/Web/HTML/Element
 const HTML_TAGS =
     'html,body,base,head,link,meta,style,title,address,article,aside,footer,' +
     'header,h1,h2,h3,h4,h5,h6,nav,section,div,dd,dl,dt,figcaption,' +
@@ -14,7 +11,6 @@ const HTML_TAGS =
     'option,output,progress,select,textarea,details,dialog,menu,' +
     'summary,template,blockquote,iframe,tfoot'
 
-// https://developer.mozilla.org/en-US/docs/Web/SVG/Element
 const SVG_TAGS =
     'svg,animate,animateMotion,animateTransform,circle,clipPath,color-profile,' +
     'defs,desc,discard,ellipse,feBlend,feColorMatrix,feComponentTransfer,' +

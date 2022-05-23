@@ -1,18 +1,17 @@
-## 函数
-### 插值表达式相关函数
-
-  toDisplayString 处理插值表达式 "{{ interpolation  }}"
-### 指令相关函数
+### 编译相关函数函数
+#### 插值表达式相关函数
+toDisplayString 处理插值表达式 "{{ interpolation  }}"
+#### 指令相关函数
 resolveDirective 编译指令
 invokeDirectiveHook 指令生命周期
 
-### 内置组件 component
+#### 内置组件 component
 resolveDynamicComponent
 
 
 
-## 常见参数/属性 
-### type
+### 常见参数/属性 
+#### type
 
 1. 组件中写的JS
 
@@ -29,7 +28,7 @@ resolveDynamicComponent
 
 
 
-## vnode instance 和 render
+### vnode instance 和 render
 
 1. vnde = render.call(instance)
 
@@ -49,8 +48,8 @@ resolveDynamicComponent
    ```
 
    
-
-## ReactiveEffect
+### Reactive
+#### ReactiveEffect
 
  在四个地方被调用
 
@@ -102,6 +101,40 @@ resolveDynamicComponent
    ```
 
    
+
+#### trigger/track 
+
+##### type
+
+1. add
+2. set
+3. delete
+4. clear
+
+##### key
+
+```js
+typeof key == 'string' // true
+```
+
+1. object
+
+   key 为 object 的 key
+
+2. array
+
+   1. length
+
+      数组长度发生变化时
+
+   2. 0
+
+      
+
+
+
+
+
 
 
 

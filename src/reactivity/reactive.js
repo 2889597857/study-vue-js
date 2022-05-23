@@ -19,7 +19,7 @@ export const shallowReactiveMap = new WeakMap()
 export const readonlyMap = new WeakMap()
 export const shallowReadonlyMap = new WeakMap()
 
-function targetTypeMap (rawType) {
+function targetTypeMap(rawType) {
   switch (rawType) {
     case 'Object':
     case 'Array':
@@ -39,7 +39,7 @@ function targetTypeMap (rawType) {
  * @returns 1: Object/Array
  * 2: Map/Set/WeakMap/WeakSet
  */
-function getTargetType (value) {
+function getTargetType(value) {
   return value['__v_skip'] || !Object.isExtensible(value)
     ? 0
     : targetTypeMap(toRawType(value))
@@ -49,7 +49,7 @@ function getTargetType (value) {
  * @param {*} target 代理对象
  * @returns
  */
-export function reactive (target) {
+export function reactive(target) {
   if (isReadonly(target)) {
     return target
   }
@@ -73,7 +73,7 @@ export function reactive (target) {
  * @param {*} target 代理对象
  * @returns
  */
-export function shallowReactive (target) {
+export function shallowReactive(target) {
   return createReactiveObject(
     target,
     false,
@@ -87,7 +87,7 @@ export function shallowReactive (target) {
  * @param {*} target 代理对象
  * @returns
  */
-export function readonly (target) {
+export function readonly(target) {
   return createReactiveObject(
     target,
     true,
@@ -101,7 +101,7 @@ export function readonly (target) {
  * @param {*} target 代理对象
  * @returns
  */
-export function shallowReadonly (target) {
+export function shallowReadonly(target) {
   return createReactiveObject(
     target,
     true,
@@ -112,14 +112,14 @@ export function shallowReadonly (target) {
 }
 /**
  * 创建代理对象
- * @param {*} target 代理对象
- * @param {*} isReadonly 是否可读
+ * @param {Object} target 代理对象
+ * @param {Boolean} isReadonly 是否可读
  * @param {*} baseHandlers 普通数据,数组对象
  * @param {*} collectionHandlers Map、Set、WeakMap、WeakSet
  * @param {*} proxyMap 已代理对象Map
  * @returns
  */
-function createReactiveObject (
+function createReactiveObject(
   target,
   isReadonly,
   baseHandlers,
@@ -150,26 +150,26 @@ function createReactiveObject (
   return proxy
 }
 
-export function isReactive (value) {
+export function isReactive(value) {
   if (isReadonly(value)) {
     return isReactive(value['__v_raw'])
   }
   return !!(value && value['__v_isReactive'])
 }
-export function isReadonly (value) {
+export function isReadonly(value) {
   return !!(value && value['__v_isReadonly'])
 }
-export function isShallow (value) {
+export function isShallow(value) {
   return !!(value && value['__v_isShallow'])
 }
-export function isProxy (value) {
+export function isProxy(value) {
   return isReactive(value) || isReadonly(value)
 }
 /**
  * 返回代理对象的原始对象
  * @param {*} observed
  */
-export function toRaw (observed) {
+export function toRaw(observed) {
   const raw = observed && observed['__v_raw']
   return raw ? toRaw(raw) : observed
 }
@@ -179,7 +179,7 @@ export function toRaw (observed) {
  * @param {*} value
  * @returns
  */
-export function markRaw (value) {
+export function markRaw(value) {
   def(value, '__v_skip', true)
   return value
 }
