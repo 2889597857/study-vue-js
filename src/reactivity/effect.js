@@ -56,14 +56,12 @@ export class ReactiveEffect {
     let parent = activeEffect
     let lastShouldTrack = shouldTrack
     // 只有一层，parent = undefined ,while不执行。
-    // 二层，执行一次。
-    console.log(activeEffect)
+    s // 二层，执行一次。
     while (parent) {
       if (parent === this) {
         console.log('parent === this')
         return
       }
-
       parent = parent.parent
     }
     try {
@@ -73,7 +71,7 @@ export class ReactiveEffect {
       // 给每一层的 effect 做标记
       // 2 4 8 16 32
       trackOpBit = 1 << ++effectTrackDepth
-      console.log(trackOpBit)
+      console.log(trackOpBit, '1')
       if (effectTrackDepth <= maxMarkerBits) {
         // 给之前收集到的依赖打上旧标记
         initDepMarkers(this)
@@ -87,6 +85,7 @@ export class ReactiveEffect {
       }
       // 恢复到上一级
       trackOpBit = 1 << --effectTrackDepth
+      console.log(trackOpBit)
       // activeEffect 还原成上一层的 activeEffect
       // 只有一层。activeEffect = undefined
       activeEffect = this.parent
@@ -158,9 +157,6 @@ export function resetTracking () {
  */
 export function track (target, _type, key) {
   if (shouldTrack && activeEffect) {
-    console.log(target)
-    console.log(key)
-    console.log('触发get')
     // 对象建立了 targetMap
     let depsMap = targetMap.get(target)
     if (!depsMap) {
