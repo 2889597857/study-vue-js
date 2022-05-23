@@ -29,11 +29,28 @@ resolveDynamicComponent
 
 
 
-### vnode instance 和 render函数渲染结果
+## vnode instance 和 render
 
+1. vnde = render.call(instance)
 
+   ```js
+   // /runtime-core/componentRenderUtils.js
+   let result = normalizeVNode(
+       render.call(
+           proxyToUse,
+           proxyToUse,
+           renderCache,
+           props,
+           setupState,
+           data,
+           ctx
+       )
+   )
+   ```
 
-### ReactiveEffect
+   
+
+## ReactiveEffect
 
  在四个地方被调用
 

@@ -4,27 +4,35 @@ import {
   unsetCurrentInstance
 } from './component.js'
 import { pauseTracking, resetTracking } from '../reactivity/index.js'
+/**
+ *
+ * @param {Object} type  - 生命周期类型
+ * @param {Function} hook - 生命周期函数的回调函数
+ * @param {*} target - 组件实例
+ * @param {*} prepend
+ * @returns {Function}
+ */
 function injectHook (type, hook, target = currentInstance, prepend = false) {
+  console.log(type, hook, target, prepend)
   if (target) {
     const hooks = target[type] || (target[type] = [])
     // cache the error handling wrapper for injected hooks so the same hook
     // can be properly deduped by the scheduler. "__weh" stands for "with error
-    // handling".
+    // handling".】
     const wrappedHook =
       hook.__weh ||
       (hook.__weh = (...args) => {
         if (target.isUnmounted) {
           return
         }
-        // disable tracking inside all lifecycle hooks
-        // since they can potentially be called inside effects.
+        // 暂停响应式
         pauseTracking()
-        // Set currentInstance during hook invocation.
-        // This assumes the hook does not synchronously trigger other hooks, which
-        // can only be false when the user does something really funky.
+        // 设置组件实例
         setCurrentInstance(target)
+        console.log(hook)
         const res = hook(args)
         unsetCurrentInstance()
+        // 恢复收集
         resetTracking()
         return res
       })
