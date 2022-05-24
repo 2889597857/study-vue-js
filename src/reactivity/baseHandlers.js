@@ -178,6 +178,8 @@ function createSetter(shallow = false) {
     // 当前值为对象
     // 查看对象是否有该属性
     // 判断是添加数据，还是修改数据
+    // true 修改数据
+    // false 添加数据
     const hadKey =
       isArray(target) && isIntegerKey(key)
         ? Number(key) < target.length
@@ -185,6 +187,7 @@ function createSetter(shallow = false) {
     const result = Reflect.set(target, key, value, receiver)
     if (target === toRaw(receiver)) {
       if (!hadKey) {
+        // 添加数据
         trigger(target, 'add', key, value)
       } else if (hasChanged(value, oldValue)) {
         // 比较新值 旧值
@@ -195,6 +198,12 @@ function createSetter(shallow = false) {
     return result
   }
 }
+/**
+ * 删除属性
+ * @param {object} target 
+ * @param {string} key 
+ * @returns 
+ */
 function deleteProperty(target, key) {
   const hadKey = hasOwn(target, key)
   const oldValue = target[key]
@@ -218,6 +227,7 @@ function ownKeys(target) {
 // 不同的 reactive 有不同的 baseHandlers 和  collectionHandlers
 // baseHandlers
 export const mutableHandlers = { get, set, deleteProperty, has, ownKeys }
+// readonly
 export const readonlyHandlers = {
   get: readonlyGet,
   set(target, key) {

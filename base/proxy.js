@@ -57,5 +57,14 @@ let a = ceateProxy([...'abcd'])
 // 第二次 get 获取当前数组长度
 // 第一次 set 设置新值
 // 第二次 set 设置了新值，length 发生变化，再次触发 set
-a.push(123)
-console.log(a);
+// a.push(123)
+
+// 修改值触发一次 set
+// a[0] = 1
+
+// 添加新值，索引大于数组长度，触发一次 set
+// a[100] = 1
+
+// 触发 3 次 get, indexOf length '0'
+a.indexOf('a')
+

@@ -194,7 +194,7 @@ export function trackEffects(dep) {
  */
 
 /**
- * 触发依赖
+ * 派发通知
  * @param { object } target
  * @param { string } type
  * @param {string} key
@@ -259,6 +259,10 @@ export function trigger(target, type, key, newValue) {
     triggerEffects(createDep(effects))
   }
 }
+/**
+ * 触发依赖
+ * @param {*} dep 
+ */
 export function triggerEffects(dep) {
   for (const effect of isArray(dep) ? dep : [...dep]) {
     if (effect !== activeEffect || effect.allowRecurse) {

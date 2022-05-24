@@ -50,6 +50,9 @@ export const isIntegerKey = key =>
 const hasOwnProperty = Object.prototype.hasOwnProperty
 export const hasOwn = (val, key) => hasOwnProperty.call(val, key)
 export const hasChanged = (oldValue, value) => value !== oldValue
+/**
+ * 合并对象
+ */
 export const extend = Object.assign
 
 export const EMPTY_OBJ = Object.freeze({})
@@ -57,7 +60,7 @@ export const EMPTY_ARR = Object.freeze([])
 /**
  * 空函数 ()=>{}
  */
-export const NOOP = () => {}
+export const NOOP = () => { }
 export const NO = () => false
 export const onRE = /^on[^a-z]/
 export const isOn = key => onRE.test(key)
@@ -92,12 +95,12 @@ export const getGlobalThis = () => {
       typeof globalThis !== 'undefined'
         ? globalThis
         : typeof self !== 'undefined'
-        ? self
-        : typeof window !== 'undefined'
-        ? window
-        : typeof global !== 'undefined'
-        ? global
-        : {})
+          ? self
+          : typeof window !== 'undefined'
+            ? window
+            : typeof global !== 'undefined'
+              ? global
+              : {})
   )
 }
 /**
@@ -174,9 +177,9 @@ export const toHandlerKey = cacheStringFunction(str =>
 export const slotFlagsText = { [1]: 'STABLE', [2]: 'DYNAMIC', [3]: 'FORWARDED' }
 export const isReservedProp = makeMap(
   ',key,ref,ref_for,ref_key,' +
-    'onVnodeBeforeMount,onVnodeMounted,' +
-    'onVnodeBeforeUpdate,onVnodeUpdated,' +
-    'onVnodeBeforeUnmount,onVnodeUnmounted'
+  'onVnodeBeforeMount,onVnodeMounted,' +
+  'onVnodeBeforeUpdate,onVnodeUpdated,' +
+  'onVnodeBeforeUnmount,onVnodeUnmounted'
 )
 export const isBuiltInDirective = makeMap(
   'bind,cloak,else-if,else,for,html,if,model,on,once,pre,show,slot,text,memo'
