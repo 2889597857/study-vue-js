@@ -47,7 +47,9 @@ export function renderComponentRoot (instance) {
       )
       // console.log(proxyToUse)
       // window.a.set(result)
-      // console.log(result)
+      
+      console.log(render)
+      console.log(result)
       fallthroughAttrs = attrs
     } else {
       const render = Component

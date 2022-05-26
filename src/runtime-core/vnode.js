@@ -28,20 +28,21 @@ export { createBaseVNode as createElementVNode }
 export const blockStack = []
 export let currentBlock = null
 
-export function openBlock (disableTracking = false) {
+export function openBlock(disableTracking = false) {
   blockStack.push((currentBlock = disableTracking ? null : []))
 }
-export function closeBlock () {
+
+export function closeBlock() {
   blockStack.pop()
   currentBlock = blockStack[blockStack.length - 1] || null
 }
 
 export let isBlockTreeEnabled = 1
 
-export function setBlockTracking (value) {
+export function setBlockTracking(value) {
   isBlockTreeEnabled += value
 }
-export function setupBlock (vnode) {
+export function setupBlock(vnode) {
   vnode.dynamicChildren =
     isBlockTreeEnabled > 0 ? currentBlock || EMPTY_ARR : null
   closeBlock()
@@ -50,7 +51,7 @@ export function setupBlock (vnode) {
   }
   return vnode
 }
-export function createElementBlock (
+export function createElementBlock(
   type,
   props,
   children,
@@ -70,22 +71,36 @@ export function createElementBlock (
     )
   )
 }
-export function createBlock (type, props, children, patchFlag, dynamicProps) {
+export function createBlock(type, props, children, patchFlag, dynamicProps) {
   return setupBlock(
     createVNode(type, props, children, patchFlag, dynamicProps, true)
   )
 }
-export function isVNode (value) {
+export function isVNode(value) {
   return value ? value.__v_isVNode === true : false
 }
-export function isSameVNodeType (n1, n2) {
+export function isSameVNodeType(n1, n2) {
   return n1.type === n2.type && n1.key === n2.key
 }
 
 export const createVNode = _createVNode
 
 export const InternalObjectKey = `__vInternal`
+/**
+ * 有属性 key 吗？
+ * 有返回 key
+ * 没有返回 null
+ * @param {object} key
+ * @returns 
+ */
 const normalizeKey = ({ key }) => (key != null ? key : null)
+/**
+ * 有属性 ref 吗？
+ * 有返回 ref
+ * 没有返回 null
+ * @param {object} key
+ * @returns 
+ */
 const normalizeRef = ({ ref, ref_key, ref_for }) => {
   return ref != null
     ? isString(ref) || isRef(ref) || isFunction(ref)
@@ -93,8 +108,19 @@ const normalizeRef = ({ ref, ref_key, ref_for }) => {
       : ref
     : null
 }
-
-export function createBaseVNode (
+/**
+ * 创建 baseVNoe
+ * @param {object | string} type 
+ * @param {object} props 
+ * @param {object} children 
+ * @param {*} patchFlag 
+ * @param {*} dynamicProps 
+ * @param {*} shapeFlag 
+ * @param {*} isBlockNode 
+ * @param {*} needFullChildrenNormalization 
+ * @returns VNode
+ */
+export function createBaseVNode(
   type,
   props = null,
   children = null,
@@ -104,6 +130,7 @@ export function createBaseVNode (
   isBlockNode = false,
   needFullChildrenNormalization = false
 ) {
+  // console.log(props);
   const vnode = {
     __v_isVNode: true,
     __v_skip: true,
@@ -151,7 +178,7 @@ export function createBaseVNode (
   }
   return vnode
 }
-function _createVNode (
+function _createVNode(
   type,
   props = null,
   children = null,
@@ -204,14 +231,14 @@ function _createVNode (
   const shapeFlag = isString(type)
     ? 1 /* ELEMENT 标签  */
     : isSuspense(type)
-    ? 128 /* SUSPENSE 异步组件？ */
-    : isTeleport(type)
-    ? 64 /* TELEPORT 可以挂载到任意节点上的组件 */
-    : isObject(type)
-    ? 4 /* STATEFUL_COMPONENT 有状态组件 */
-    : isFunction(type)
-    ? 2 /* FUNCTIONAL_COMPONENT 函数组件 */
-    : 0
+      ? 128 /* SUSPENSE 异步组件？ */
+      : isTeleport(type)
+        ? 64 /* TELEPORT 可以挂载到任意节点上的组件 */
+        : isObject(type)
+          ? 4 /* STATEFUL_COMPONENT 有状态组件 */
+          : isFunction(type)
+            ? 2 /* FUNCTIONAL_COMPONENT 函数组件 */
+            : 0
   return createBaseVNode(
     type,
     props,
@@ -223,13 +250,13 @@ function _createVNode (
     true
   )
 }
-export function guardReactiveProps (props) {
+export function guardReactiveProps(props) {
   if (!props) return null
   return isProxy(props) || InternalObjectKey in props
     ? extend({}, props)
     : props
 }
-export function cloneVNode (vnode, extraProps, mergeRef = false) {
+export function cloneVNode(vnode, extraProps, mergeRef = false) {
   const { props, ref, patchFlag, children } = vnode
   const mergedProps = extraProps ? mergeProps(props || {}, extraProps) : props
   const cloned = {
@@ -273,27 +300,33 @@ export function cloneVNode (vnode, extraProps, mergeRef = false) {
   }
   return cloned
 }
-export function deepCloneVNode (vnode) {
+export function deepCloneVNode(vnode) {
   const cloned = cloneVNode(vnode)
   if (isArray(vnode.children)) {
     cloned.children = vnode.children.map(deepCloneVNode)
   }
   return cloned
 }
-export function createTextVNode (text = ' ', flag = 0) {
+export function createTextVNode(text = ' ', flag = 0) {
   return createVNode(Text, null, text, flag)
 }
-export function createStaticVNode (content, numberOfNodes) {
+export function createStaticVNode(content, numberOfNodes) {
   const vnode = createVNode(Static, null, content)
   vnode.staticCount = numberOfNodes
   return vnode
 }
-export function createCommentVNode (text = '', asBlock = false) {
+/**
+ * 创建注释 vndoe
+ * @param {*} text 
+ * @param {*} asBlock 
+ * @returns VNode
+ */
+export function createCommentVNode(text = '', asBlock = false) {
   return asBlock
     ? (openBlock(), createBlock(Comment, null, text))
     : createVNode(Comment, null, text)
 }
-export function normalizeVNode (child) {
+export function normalizeVNode(child) {
   if (child == null || typeof child === 'boolean') {
     return createVNode(Comment)
   } else if (isArray(child)) {
@@ -304,10 +337,10 @@ export function normalizeVNode (child) {
     return createVNode(Text, null, String(child))
   }
 }
-export function cloneIfMounted (child) {
+export function cloneIfMounted(child) {
   return child.el === null || child.memo ? child : cloneVNode(child)
 }
-export function normalizeChildren (vnode, children) {
+export function normalizeChildren(vnode, children) {
   let type = 0
   const { shapeFlag } = vnode
   if (children == null) {
@@ -352,7 +385,7 @@ export function normalizeChildren (vnode, children) {
   vnode.children = children
   vnode.shapeFlag |= type
 }
-export function mergeProps (...args) {
+export function mergeProps(...args) {
   const ret = {}
   for (let i = 0; i < args.length; i++) {
     const toMerge = args[i]
@@ -380,6 +413,6 @@ export function mergeProps (...args) {
   }
   return ret
 }
-export function invokeVNodeHook (hook, instance, vnode, prevVNode = null) {
+export function invokeVNodeHook(hook, instance, vnode, prevVNode = null) {
   hook(vnode, prevVNode)
 }

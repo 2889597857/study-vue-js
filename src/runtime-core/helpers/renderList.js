@@ -1,5 +1,15 @@
-import { isString, isObject, isArray, EMPTY_ARR } from '../../shared/index.js'
-export function renderList (source, renderItem, cache, index) {
+import { isString, isObject, isArray } from '../../shared/index.js'
+/**
+ * 
+ * @param {*} source 
+ * @param {*} renderItem 
+ * @param {*} cache 
+ * @param {*} index 
+ * @returns VNode []
+ */
+export function renderList(source, renderItem, cache, index) {
+  console.log(source);
+  console.log(renderItem);
   let ret
   const cached = cache && cache[index]
   if (isArray(source) || isString(source)) {
@@ -34,70 +44,6 @@ export function renderList (source, renderItem, cache, index) {
   if (cache) {
     cache[index] = ret
   }
-  return ret
-}
-function createSlots (slots, dynamicSlots) {
-  for (let i = 0; i < dynamicSlots.length; i++) {
-    const slot = dynamicSlots[i]
-    if (isArray(slot)) {
-      for (let j = 0; j < slot.length; j++) {
-        slots[slot[j].name] = slot[j].fn
-      }
-    } else if (slot) {
-      slots[slot.name] = slot.fn
-    }
-  }
-  return slots
-}
-function renderSlot (slots, name, props = {}, fallback, noSlotted) {
-  if (currentRenderingInstance.isCE) {
-    return createVNode(
-      'slot',
-      name === 'default' ? null : { name },
-      fallback && fallback()
-    )
-  }
-  let slot = slots[name]
-  if (slot && slot.length > 1) {
-    slot = () => []
-  }
-  if (slot && slot._c) {
-    slot._d = false
-  }
-  openBlock()
-  const validSlotContent = slot && ensureValidVNode(slot(props))
-  const rendered = createBlock(
-    Fragment,
-    { key: props.key || `_${name}` },
-    validSlotContent || (fallback ? fallback() : []),
-    validSlotContent && slots._ === 1 ? 64 : -2
-  )
-  if (!noSlotted && rendered.scopeId) {
-    rendered.slotScopeIds = [rendered.scopeId + '-s']
-  }
-  if (slot && slot._c) {
-    slot._d = true
-  }
-  return rendered
-}
-function ensureValidVNode (vnodes) {
-  return vnodes.some(child => {
-    if (!isVNode(child)) return true
-    if (child.type === Comment) return false
-    if (child.type === Fragment && !ensureValidVNode(child.children))
-      return false
-    return true
-  })
-    ? vnodes
-    : null
-}
-function toHandlers (obj) {
-  const ret = {}
-  if (!isObject(obj)) {
-    return ret
-  }
-  for (const key in obj) {
-    ret[toHandlerKey(key)] = obj[key]
-  }
+  console.log(ret);
   return ret
 }

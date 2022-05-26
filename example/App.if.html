@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>ApiLifecycle</title>
+</head>
+
+<body>
+    <div id="app">
+        <h1 v-for="item in data"  :key="item.title">
+          <p v-if="item.show"> {{item.title}}</p>
+        </h1>
+
+    </div>
+    <script type="module">
+        import { createApp,ref} from '../src/index.js';
+        // import { createApp,ref} from '../vue.global.js';
+        createApp({
+            setup() {
+                const data = ref([
+                    {
+                        title:'A!@#',
+                        show:1
+                    },
+                    {
+                        title:'B',
+                        show:0
+                    },
+                    {
+                        title:'C',
+                        show:1
+                    },
+                ])
+                return {
+                    data
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+
+</html>
