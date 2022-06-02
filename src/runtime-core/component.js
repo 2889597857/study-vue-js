@@ -33,7 +33,7 @@ import {
 const emptyAppContext = createAppContext()
 let uid = 0
 // 创建组件实例
-export function createComponentInstance (vnode, parent, suspense) {
+export function createComponentInstance(vnode, parent, suspense) {
   const type = vnode.type
   //  type 数据
   // {
@@ -171,11 +171,11 @@ export const unsetCurrentInstance = () => {
   currentInstance = null
 }
 
-function isStatefulComponent (instance) {
+function isStatefulComponent(instance) {
   return instance.vnode.shapeFlag & 4
 }
 
-export function setupComponent (instance) {
+export function setupComponent(instance) {
   const { props, children } = instance.vnode
   // 判断是否是一个有状态的组件
   const isStateful = isStatefulComponent(instance)
@@ -189,7 +189,7 @@ export function setupComponent (instance) {
   return setupResult
 }
 
-function setupStatefulComponent (instance) {
+function setupStatefulComponent(instance) {
   const Component = instance.type
   // 创建渲染代理的属性缓存
   instance.accessCache = Object.create(null)
@@ -203,10 +203,10 @@ function setupStatefulComponent (instance) {
   if (setup) {
     const setupContext = (instance.setupContext =
       setup.length > 1 ? createSetupContext(instance) : null)
+    // 设置当前组件实例，方便 setup 里面函数执行时获取当前实例
     setCurrentInstance(instance)
     pauseTracking()
     // 执行 setup
-
     const setupResult =
       setup && setup(shallowReadonly(instance.props), setupContext)
     resetTracking()
@@ -218,7 +218,7 @@ function setupStatefulComponent (instance) {
   }
 }
 
-function handleSetupResult (instance, setupResult) {
+function handleSetupResult(instance, setupResult) {
   if (isFunction(setupResult)) {
     // setup 返回渲染函数
     instance.render = setupResult
@@ -231,7 +231,7 @@ function handleSetupResult (instance, setupResult) {
 
 let compile
 let installWithProxy
-export function registerRuntimeCompiler (_compile) {
+export function registerRuntimeCompiler(_compile) {
   compile = _compile
   installWithProxy = i => {
     if (i.render._rc) {
@@ -240,7 +240,7 @@ export function registerRuntimeCompiler (_compile) {
   }
 }
 
-function finishComponentSetup (instance) {
+function finishComponentSetup(instance) {
   const Component = instance.type
   // 组件实例上是否有 render 函数
   if (!instance.render) {
@@ -269,19 +269,20 @@ function finishComponentSetup (instance) {
       installWithProxy(instance)
     }
   }
-  {
-    setCurrentInstance(instance)
-    pauseTracking()
-    // 兼容 vue2 写法
-    // applyOptions(instance)
-    resetTracking()
-    unsetCurrentInstance()
-  }
+  //  兼容 vue2 data
+  // {
+  //   setCurrentInstance(instance)
+  //   pauseTracking()
+  //   // 兼容 vue2 写法
+  //   applyOptions(instance)
+  //   resetTracking()
+  //   unsetCurrentInstance()
+  // }
 }
 
-export function createAttrsProxy (instance) {
+export function createAttrsProxy(instance) {
   return new Proxy(instance.attrs, {
-    get (target, key) {
+    get(target, key) {
       markAttrsAccessed()
       track(instance, 'get', '$attrs')
       return target[key]
@@ -289,13 +290,13 @@ export function createAttrsProxy (instance) {
   })
 }
 
-export function createSetupContext (instance) {
+export function createSetupContext(instance) {
   const expose = exposed => {
     instance.exposed = exposed || {}
   }
   let attrs
   return {
-    get attrs () {
+    get attrs() {
       return attrs || (attrs = createAttrsProxy(instance))
     },
     slots: instance.slots,
@@ -304,12 +305,12 @@ export function createSetupContext (instance) {
   }
 }
 
-export function getExposeProxy (instance) {
+export function getExposeProxy(instance) {
   if (instance.exposed) {
     return (
       instance.exposeProxy ||
       (instance.exposeProxy = new Proxy(proxyRefs(markRaw(instance.exposed)), {
-        get (target, key) {
+        get(target, key) {
           if (key in target) {
             return target[key]
           } else if (key in publicPropertiesMap) {
@@ -324,12 +325,12 @@ const classifyRE = /(?:^|[-_])(\w)/g
 const classify = str =>
   str.replace(classifyRE, c => c.toUpperCase()).replace(/[-_]/g, '')
 
-export function getComponentName (Component) {
+export function getComponentName(Component) {
   return isFunction(Component)
     ? Component.displayName || Component.name
     : Component.name
 }
-export function formatComponentName (instance, Component, isRoot = false) {
+export function formatComponentName(instance, Component, isRoot = false) {
   let name = getComponentName(Component)
   if (!name && Component.__file) {
     const match = Component.__file.match(/([^/\\]+)\.\w+$/)
@@ -352,6 +353,6 @@ export function formatComponentName (instance, Component, isRoot = false) {
   }
   return name ? classify(name) : isRoot ? `App` : `Anonymous`
 }
-export function isClassComponent (value) {
+export function isClassComponent(value) {
   return isFunction(value) && '__vccOpts' in value
 }

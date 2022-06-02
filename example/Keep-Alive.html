@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>keep-alive</title>
+</head>
+
+<body>
+    <div id="app">
+        <keep-alive>
+          <div>
+            <input v-model="data1" type="text" v-if="show" />
+            <input v-model="data2" type="text" v-if="!show" />
+          </div>
+        </keep-alive>
+        <button @click="show = !show">show</button>
+    </div>
+    <script type="module">
+        import { createApp, ref } from '../src/index.js';
+        // import { createApp,ref} from '../vue.global.js';
+        const app =  createApp({
+            setup() {
+                const show = ref(true)
+                const data1 = ref(1)
+                const data2 = ref(2)
+                return {
+                    show,data1,data2
+                }
+            }
+        })
+        app.mount('#app')
+    </script>
+</body>
+
+</html>

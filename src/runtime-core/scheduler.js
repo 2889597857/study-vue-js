@@ -40,7 +40,7 @@ const resolvedPromise = Promise.resolve()
 let currentFlushPromise = null
 let currentPreFlushParentJob = null
 
-export function nextTick (fn) {
+export function nextTick(fn) {
   const p = currentFlushPromise || resolvedPromise
   return fn ? p.then(this ? fn.bind(this) : fn) : p
 }
@@ -48,7 +48,7 @@ export function nextTick (fn) {
  * 计算出需要插入的位置
  * @param {*} id
  */
-function findInsertionIndex (id) {
+function findInsertionIndex(id) {
   let start = flushIndex + 1
   let end = queue.length
   while (start < end) {
@@ -67,7 +67,7 @@ function findInsertionIndex (id) {
  * }
  */
 // 加入queue
-export function queueJob (job) {
+export function queueJob(job) {
   // 去重
   if (
     (!queue.length ||
@@ -91,7 +91,7 @@ export function queueJob (job) {
 /**
  * 开始执行队列任务。
  */
-function queueFlush () {
+function queueFlush() {
   if (!isFlushing && !isFlushPending) {
     isFlushPending = true
     // 等待所有组件数据都更新完,开始执行队列
@@ -103,7 +103,7 @@ function queueFlush () {
  * 删除job
  * @param {*} job
  */
-export function invalidateJob (job) {
+export function invalidateJob(job) {
   const i = queue.indexOf(job)
   if (i > flushIndex) {
     queue.splice(i, 1)
@@ -116,7 +116,7 @@ export function invalidateJob (job) {
  * @param {*} pendingQueue
  * @param {*} index
  */
-function queueCb (cb, activeQueue, pendingQueue, index) {
+function queueCb(cb, activeQueue, pendingQueue, index) {
   if (!isArray(cb)) {
     // 去重
     if (
@@ -135,20 +135,20 @@ function queueCb (cb, activeQueue, pendingQueue, index) {
  *  加入 Pre 队列
  * @param {Function} callback
  */
-export function queuePreFlushCb (cb) {
+export function queuePreFlushCb(cb) {
   queueCb(cb, activePreFlushCbs, pendingPreFlushCbs, preFlushIndex)
 }
 /**
  * 加入 Post 队列
  * @param {Function} callback
  */
-export function queuePostFlushCb (cb) {
+export function queuePostFlushCb(cb) {
   queueCb(cb, activePostFlushCbs, pendingPostFlushCbs, postFlushIndex)
 }
 /**
  * 执行Pre队列
  */
-export function flushPreFlushCbs (seen, parentJob = null) {
+export function flushPreFlushCbs(seen, parentJob = null) {
   if (pendingPreFlushCbs.length) {
     currentPreFlushParentJob = parentJob
     // 执行前去重
@@ -175,11 +175,10 @@ export function flushPreFlushCbs (seen, parentJob = null) {
 /**
  * 执行Post队列
  */
-export function flushPostFlushCbs () {
+export function flushPostFlushCbs() {
   if (pendingPostFlushCbs.length) {
     // 执行前去重
     const deduped = [...new Set(pendingPostFlushCbs)]
-    console.log(deduped)
     pendingPostFlushCbs.length = 0
     if (activePostFlushCbs) {
       activePostFlushCbs.push(...deduped)
@@ -206,7 +205,7 @@ const getId = job => (job.id == null ? Infinity : job.id)
 /**
  * 开始执行三个队列中的任务
  */
-function flushJobs () {
+function flushJobs() {
   isFlushPending = false
   isFlushing = true
 

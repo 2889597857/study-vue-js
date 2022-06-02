@@ -12,8 +12,8 @@ import { pauseTracking, resetTracking } from '../reactivity/index.js'
  * @param {*} prepend
  * @returns {Function}
  */
-function injectHook (type, hook, target = currentInstance, prepend = false) {
-  console.log(type, hook, target, prepend)
+export function injectHook(type, hook, target = currentInstance, prepend = false) {
+  // console.log(type, hook, target, prepend)
   if (target) {
     const hooks = target[type] || (target[type] = [])
     // cache the error handling wrapper for injected hooks so the same hook
@@ -29,7 +29,7 @@ function injectHook (type, hook, target = currentInstance, prepend = false) {
         pauseTracking()
         // 设置组件实例
         setCurrentInstance(target)
-        console.log(hook)
+        // console.log(hook)
         const res = hook(args)
         unsetCurrentInstance()
         // 恢复收集
@@ -55,6 +55,6 @@ export const onUnmounted = createHook('um' /* UNMOUNTED */)
 export const onServerPrefetch = createHook('sp' /* SERVER_PREFETCH */)
 export const onRenderTriggered = createHook('rtg' /* RENDER_TRIGGERED */)
 export const onRenderTracked = createHook('rtc' /* RENDER_TRACKED */)
-export function onErrorCaptured (hook, target = currentInstance) {
+export function onErrorCaptured(hook, target = currentInstance) {
   injectHook('ec' /* ERROR_CAPTURED */, hook, target)
 }

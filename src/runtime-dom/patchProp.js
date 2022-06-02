@@ -1,6 +1,9 @@
 import { patchClass, patchStyle, patchAttr, patchDOMProp } from './modules.js'
 import { isOn, isModelListener } from '../shared/index.js'
 import { patchEvent } from './modules/events.js'
+
+const nativeOnRE = /^on[a-z]/
+
 export const patchProp = (
   el,
   key,
@@ -17,7 +20,6 @@ export const patchProp = (
   } else if (key === 'style') {
     patchStyle(el, prevValue, nextValue)
   } else if (isOn(key)) {
-    // ignore v-model listeners
     if (!isModelListener(key)) {
       patchEvent(el, key, prevValue, nextValue, parentComponent)
     }
@@ -25,8 +27,8 @@ export const patchProp = (
     key[0] === '.'
       ? ((key = key.slice(1)), true)
       : key[0] === '^'
-      ? ((key = key.slice(1)), false)
-      : shouldSetAsProp(el, key, nextValue, isSVG)
+        ? ((key = key.slice(1)), false)
+        : shouldSetAsProp(el, key, nextValue, isSVG)
   ) {
     patchDOMProp(
       el,
@@ -49,4 +51,46 @@ export const patchProp = (
     }
     patchAttr(el, key, nextValue, isSVG)
   }
+}
+
+function shouldSetAsProp(el, key, value, isSVG) {
+  if (isSVG) {
+    // most keys must be set as attribute on svg elements to work
+    // ...except innerHTML & textContent
+    if (key === 'innerHTML' || key === 'textContent') {
+      return true
+    }
+    // or native onclick with function values
+    if (key in el && nativeOnRE.test(key) && isFunction(value)) {
+      return true
+    }
+    return false
+  }
+  // spellcheck and draggable are numerated attrs, however their
+  // corresponding DOM properties are actually booleans - this leads to
+  // setting it with a string "false" value leading it to be coerced to
+  // `true`, so we need to always treat them as attributes.
+  // Note that `contentEditable` doesn't have this problem: its DOM
+  // property is also enumerated string values.
+  if (key === 'spellcheck' || key === 'draggable') {
+    return false
+  }
+  // #1787, #2840 form property on form elements is readonly and must be set as
+  // attribute.
+  if (key === 'form') {
+    return false
+  }
+  // #1526 <input list> must be set as attribute
+  if (key === 'list' && el.tagName === 'INPUT') {
+    return false
+  }
+  // #2766 <textarea type> must be set as attribute
+  if (key === 'type' && el.tagName === 'TEXTAREA') {
+    return false
+  }
+  // native onclick with string value, must be set as attribute
+  if (nativeOnRE.test(key) && isString(value)) {
+    return false
+  }
+  return key in el
 }

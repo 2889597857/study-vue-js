@@ -1,9 +1,9 @@
-import { isFunction, EMPTY_OBJ, isBuiltInDirective } from '../shared/index.js'
+import { isFunction, EMPTY_OBJ } from '../shared/index.js'
 import { currentRenderingInstance } from './componentRenderContext.js'
 import { pauseTracking, resetTracking } from '../reactivity/index.js'
 import { traverse } from './apiWatch.js'
 
-export function withDirectives (vnode, directives) {
+export function withDirectives(vnode, directives) {
   const internalInstance = currentRenderingInstance
   if (internalInstance === null) {
     return vnode
@@ -22,7 +22,7 @@ export function withDirectives (vnode, directives) {
   }
   return vnode
 }
-export function invokeDirectiveHook (vnode, prevVNode, instance, name) {
+export function invokeDirectiveHook(vnode, prevVNode, instance, name) {
   const bindings = vnode.dirs
   const oldBindings = prevVNode && prevVNode.dirs
   for (let i = 0; i < bindings.length; i++) {

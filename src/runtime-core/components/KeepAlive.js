@@ -1,3 +1,34 @@
+import {
+  getCurrentInstance,
+  currentInstance,
+  getComponentName,
+} from '../component.js'
+import {
+  cloneVNode,
+  isVNode,
+  invokeVNodeHook
+} from '../vnode.js'
+import {
+  onBeforeUnmount,
+  injectHook,
+  onUnmounted,
+  onMounted,
+  onUpdated
+} from '../apiLifecycle.js'
+import {
+  isString,
+  isArray,
+  remove,
+  invokeArrayFns
+} from '../../shared/index.js'
+import { watch } from '../apiWatch.js'
+import {
+  queuePostRenderEffect,
+} from '../renderer.js'
+import { setTransitionHooks } from './BaseTransition.js'
+import { isAsyncWrapper } from '../apiAsyncComponent.js'
+// import { isSuspense } from './Suspense'
+
 export const isKeepAlive = vnode => vnode.type.__isKeepAlive
 export const KeepAliveImpl = {
   name: `KeepAlive`,
@@ -7,7 +38,7 @@ export const KeepAliveImpl = {
     exclude: [String, RegExp, Array],
     max: [String, Number]
   },
-  setup (props, { slots }) {
+  setup(props, { slots }) {
     const instance = getCurrentInstance()
     const sharedContext = instance.ctx
     if (!sharedContext.renderer) {
@@ -68,11 +99,11 @@ export const KeepAliveImpl = {
         instance.isDeactivated = true
       }, parentSuspense)
     }
-    function unmount (vnode) {
+    function unmount(vnode) {
       resetShapeFlag(vnode)
       _unmount(vnode, instance, parentSuspense, true)
     }
-    function pruneCache (filter) {
+    function pruneCache(filter) {
       cache.forEach((vnode, key) => {
         const name = getComponentName(vnode.type)
         if (name && (!filter || !filter(name))) {
@@ -80,7 +111,7 @@ export const KeepAliveImpl = {
         }
       })
     }
-    function pruneCacheEntry (key) {
+    function pruneCacheEntry(key) {
       const cached = cache.get(key)
       if (!current || cached.type !== current.type) {
         unmount(cached)
@@ -181,7 +212,7 @@ export const KeepAliveImpl = {
 }
 export const KeepAlive = KeepAliveImpl
 
-function matches (pattern, name) {
+function matches(pattern, name) {
   if (isArray(pattern)) {
     return pattern.some(p => matches(p, name))
   } else if (isString(pattern)) {
@@ -191,13 +222,13 @@ function matches (pattern, name) {
   }
   return false
 }
-export function onActivated (hook, target) {
+export function onActivated(hook, target) {
   registerKeepAliveHook(hook, 'a', target)
 }
-export function onDeactivated (hook, target) {
+export function onDeactivated(hook, target) {
   registerKeepAliveHook(hook, 'da', target)
 }
-function registerKeepAliveHook (hook, type, target = currentInstance) {
+function registerKeepAliveHook(hook, type, target = currentInstance) {
   const wrappedHook =
     hook.__wdc ||
     (hook.__wdc = () => {
@@ -221,13 +252,13 @@ function registerKeepAliveHook (hook, type, target = currentInstance) {
     }
   }
 }
-function injectToKeepAliveRoot (hook, type, target, keepAliveRoot) {
+function injectToKeepAliveRoot(hook, type, target, keepAliveRoot) {
   const injected = injectHook(type, hook, keepAliveRoot, true)
   onUnmounted(() => {
     remove(keepAliveRoot[type], injected)
   }, target)
 }
-function resetShapeFlag (vnode) {
+function resetShapeFlag(vnode) {
   let shapeFlag = vnode.shapeFlag
   if (shapeFlag & 256) {
     shapeFlag -= 256
@@ -237,6 +268,6 @@ function resetShapeFlag (vnode) {
   }
   vnode.shapeFlag = shapeFlag
 }
-function getInnerChild (vnode) {
+function getInnerChild(vnode) {
   return vnode.shapeFlag & 128 ? vnode.ssContent : vnode
 }

@@ -2,7 +2,7 @@ import { isFunction } from '../shared/index.js'
 import { currentRenderingInstance } from './componentRenderContext.js'
 import { currentInstance } from './component.js'
 
-export function provide (key, value) {
+export function provide(key, value) {
   if (!currentInstance) {
     return false
   } else {
@@ -15,7 +15,7 @@ export function provide (key, value) {
     provides[key] = value
   }
 }
-export function inject (key, defaultValue, treatDefaultAsFactory = false) {
+export function inject(key, defaultValue, treatDefaultAsFactory = false) {
   const instance = currentInstance || currentRenderingInstance
   if (instance) {
     const provides =

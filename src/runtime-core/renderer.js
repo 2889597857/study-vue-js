@@ -33,18 +33,19 @@ import {
   isReservedProp,
   isArray,
   EMPTY_OBJ,
-  invokeArrayFns
+  invokeArrayFns,
+  EMPTY_ARR
 } from '../shared/index.js'
 import { setRef } from './rendererTemplateRef.js'
 import { pauseTracking, resetTracking } from '../reactivity/index.js'
 
 export const queuePostRenderEffect = queueEffectWithSuspense
 
-export function createRenderer (options) {
+export function createRenderer(options) {
   return baseCreateRenderer(options)
 }
 
-function baseCreateRenderer (options) {
+function baseCreateRenderer(options) {
   // options 来自runtime-dom nodeOps.js和patchProps
   const {
     insert: hostInsert,
@@ -498,9 +499,9 @@ function baseCreateRenderer (options) {
       const newVNode = newChildren[i]
       const container =
         oldVNode.el &&
-        (oldVNode.type === Fragment ||
-          !isSameVNodeType(oldVNode, newVNode) ||
-          oldVNode.shapeFlag & (6 | 64))
+          (oldVNode.type === Fragment ||
+            !isSameVNodeType(oldVNode, newVNode) ||
+            oldVNode.shapeFlag & (6 | 64))
           ? hostParentNode(oldVNode.el)
           : fallbackContainer
       patch(
@@ -1097,6 +1098,7 @@ function baseCreateRenderer (options) {
           patched++
         }
       }
+      // keep-alive 报错
       const increasingNewIndexSequence = moved
         ? getSequence(newIndexToOldIndexMap)
         : EMPTY_ARR
@@ -1373,10 +1375,10 @@ function baseCreateRenderer (options) {
   }
 }
 
-function toggleRecurse ({ effect, update }, allowed) {
+function toggleRecurse({ effect, update }, allowed) {
   effect.allowRecurse = update.allowRecurse = allowed
 }
-export function traverseStaticChildren (n1, n2, shallow = false) {
+export function traverseStaticChildren(n1, n2, shallow = false) {
   const ch1 = n1.children
   const ch2 = n2.children
   if (isArray(ch1) && isArray(ch2)) {
@@ -1393,7 +1395,7 @@ export function traverseStaticChildren (n1, n2, shallow = false) {
     }
   }
 }
-function getSequence (arr) {
+function getSequence(arr) {
   const p = arr.slice()
   const result = [0]
   let i, j, u, v, c

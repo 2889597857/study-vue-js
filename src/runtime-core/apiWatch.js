@@ -25,33 +25,33 @@ import {
 } from './component.js'
 import { queuePostRenderEffect } from './renderer.js'
 
-export function watchEffect (effect, options) {
+export function watchEffect(effect, options) {
   return doWatch(effect, null, options)
 }
 
-export function watchPostEffect (effect, options) {
+export function watchPostEffect(effect, options) {
   return doWatch(effect, null, Object.assign(options || {}, { flush: 'post' }))
 }
 
-export function watchSyncEffect (effect, options) {
+export function watchSyncEffect(effect, options) {
   return doWatch(effect, null, Object.assign(options || {}, { flush: 'sync' }))
 }
 const INITIAL_WATCHER_VALUE = {}
 
-export function watch (source, cb, options) {
+export function watch(source, cb, options) {
   if (!isFunction(cb)) return false
   return doWatch(source, cb, options)
 }
 /**
- * @param {ref reactive Array Function} source 需要监听的数据
- * @param {*} cb 回调函数
+ * @param {ref|reactive|Array|Function} source 需要监听的数据
+ * @param {function} cb 回调函数
  * @param {*} options 配置
  * @param {Boolean}immediate 立即执行
  * @param {Boolean} deep 深层次监听
  * @param {pre|post} flush 回调函数的执行时机，组件更新前、更新后、更新时
  *
  */
-function doWatch (source, cb, { immediate, deep, flush } = EMPTY_OBJ) {
+function doWatch(source, cb, { immediate, deep, flush } = EMPTY_OBJ) {
   const instance = currentInstance
   let getter
   let forceTrigger = false
@@ -195,7 +195,7 @@ function doWatch (source, cb, { immediate, deep, flush } = EMPTY_OBJ) {
   }
 }
 
-export function instanceWatch (source, value, options) {
+export function instanceWatch(source, value, options) {
   const publicThis = this.proxy
   const getter = isString(source)
     ? source.includes('.')
@@ -220,7 +220,7 @@ export function instanceWatch (source, value, options) {
   return res
 }
 
-export function createPathGetter (ctx, path) {
+export function createPathGetter(ctx, path) {
   const segments = path.split('.')
   return () => {
     let cur = ctx
@@ -230,7 +230,7 @@ export function createPathGetter (ctx, path) {
     return cur
   }
 }
-export function traverse (value, seen) {
+export function traverse(value, seen) {
   if (!isObject(value) || value['__v_skip']) {
     return value
   }

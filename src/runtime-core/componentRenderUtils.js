@@ -9,8 +9,8 @@ import {
 import { isOn, isModelListener } from '../shared/index.js'
 import { isEmitListener } from './componentEmits.js'
 import { setCurrentRenderingInstance } from './componentRenderContext.js'
-window.a = new Map()
-export function renderComponentRoot (instance) {
+
+export function renderComponentRoot(instance) {
   const {
     type: Component,
     vnode,
@@ -31,6 +31,7 @@ export function renderComponentRoot (instance) {
   let result
   let fallthroughAttrs
   const prev = setCurrentRenderingInstance(instance)
+  // console.log(render)
   try {
     if (vnode.shapeFlag & 4) {
       const proxyToUse = withProxy || proxy
@@ -45,11 +46,6 @@ export function renderComponentRoot (instance) {
           ctx
         )
       )
-      // console.log(proxyToUse)
-      // window.a.set(result)
-      
-      console.log(render)
-      console.log(result)
       fallthroughAttrs = attrs
     } else {
       const render = Component
@@ -95,7 +91,7 @@ export function renderComponentRoot (instance) {
   return result
 }
 
-export function filterSingleRoot (children) {
+export function filterSingleRoot(children) {
   let singleRoot
   for (let i = 0; i < children.length; i++) {
     const child = children[i]
@@ -118,7 +114,7 @@ const getFunctionalFallthrough = attrs => {
   let res
   for (const key in attrs) {
     if (key === 'class' || key === 'style' || isOn(key)) {
-      ;(res || (res = {}))[key] = attrs[key]
+      ; (res || (res = {}))[key] = attrs[key]
     }
   }
   return res
@@ -136,7 +132,7 @@ const isElementRoot = vnode => {
   return vnode.shapeFlag & (6 | 1) || vnode.type === Comment
 }
 
-export function shouldUpdateComponent (prevVNode, nextVNode, optimized) {
+export function shouldUpdateComponent(prevVNode, nextVNode, optimized) {
   const { props: prevProps, children: prevChildren, component } = prevVNode
   const { props: nextProps, children: nextChildren, patchFlag } = nextVNode
   const emits = component.emitsOptions
@@ -182,7 +178,7 @@ export function shouldUpdateComponent (prevVNode, nextVNode, optimized) {
   return false
 }
 
-function hasPropsChanged (prevProps, nextProps, emitsOptions) {
+function hasPropsChanged(prevProps, nextProps, emitsOptions) {
   const nextKeys = Object.keys(nextProps)
   if (nextKeys.length !== Object.keys(prevProps).length) {
     return true
@@ -199,9 +195,9 @@ function hasPropsChanged (prevProps, nextProps, emitsOptions) {
   return false
 }
 
-export function updateHOCHostEl ({ vnode, parent }, el) {
+export function updateHOCHostEl({ vnode, parent }, el) {
   while (parent && parent.subTree === vnode) {
-    ;(vnode = parent.vnode).el = el
+    ; (vnode = parent.vnode).el = el
     parent = parent.parent
   }
 }
