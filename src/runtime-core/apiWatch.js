@@ -37,7 +37,13 @@ export function watchSyncEffect(effect, options) {
   return doWatch(effect, null, Object.assign(options || {}, { flush: 'sync' }))
 }
 const INITIAL_WATCHER_VALUE = {}
-
+/**
+ * 
+ * @param {*} source 监听数据
+ * @param {function} cb 数据变化时执行的函数
+ * @param {*} options 配置，immediate：立即执行, deep：深层次监听, flush：pre|post|sync 回调函数的执行时机
+ * @returns 
+ */
 export function watch(source, cb, options) {
   if (!isFunction(cb)) return false
   return doWatch(source, cb, options)
@@ -48,7 +54,7 @@ export function watch(source, cb, options) {
  * @param {*} options 配置
  * @param {Boolean}immediate 立即执行
  * @param {Boolean} deep 深层次监听
- * @param {pre|post} flush 回调函数的执行时机，组件更新前、更新后、更新时
+ * @param {pre|post|sync} flush 回调函数的执行时机，组件更新前、更新后、更新时
  *
  */
 function doWatch(source, cb, { immediate, deep, flush } = EMPTY_OBJ) {

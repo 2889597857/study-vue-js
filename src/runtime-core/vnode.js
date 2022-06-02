@@ -203,6 +203,7 @@ function _createVNode(
     return cloned
   }
   // 是否是 函数 ，并且有 ’__vccOpts‘
+  // 是不是一个 class 类型的组件
   if (isClassComponent(type)) {
     type = type.__vccOpts
   }

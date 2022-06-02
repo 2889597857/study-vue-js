@@ -675,6 +675,7 @@ function baseCreateRenderer(options) {
       parentComponent,
       parentSuspense
     ))
+    // 是否是 keep-alive 组件
     if (isKeepAlive(initialVNode)) {
       instance.ctx.renderer = internals
     }

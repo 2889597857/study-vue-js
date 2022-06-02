@@ -353,6 +353,11 @@ export function formatComponentName(instance, Component, isRoot = false) {
   }
   return name ? classify(name) : isRoot ? `App` : `Anonymous`
 }
+/**
+ *  是不是一个 class 类型的组件
+ * @param {*} value 
+ * @returns 
+ */
 export function isClassComponent(value) {
   return isFunction(value) && '__vccOpts' in value
 }

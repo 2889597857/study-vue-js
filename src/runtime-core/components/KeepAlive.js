@@ -39,6 +39,7 @@ export const KeepAliveImpl = {
     max: [String, Number]
   },
   setup(props, { slots }) {
+    console.log(123);
     const instance = getCurrentInstance()
     const sharedContext = instance.ctx
     if (!sharedContext.renderer) {
@@ -47,9 +48,7 @@ export const KeepAliveImpl = {
     const cache = new Map()
     const keys = new Set()
     let current = null
-    {
-      instance.__v_cache = cache
-    }
+
     const parentSuspense = instance.suspense
     const {
       renderer: {
@@ -59,6 +58,7 @@ export const KeepAliveImpl = {
         o: { createElement }
       }
     } = sharedContext
+    console.log(sharedContext);
     const storageContainer = createElement('div')
     sharedContext.activate = (vnode, container, anchor, isSVG, optimized) => {
       const instance = vnode.component
@@ -258,6 +258,12 @@ function injectToKeepAliveRoot(hook, type, target, keepAliveRoot) {
     remove(keepAliveRoot[type], injected)
   }, target)
 }
+/**
+ *  shapeFlag 是否等于 256 / 512
+ *  等于，归零
+ *  不等于，不变
+ * @param {*} vnode 
+ */
 function resetShapeFlag(vnode) {
   let shapeFlag = vnode.shapeFlag
   if (shapeFlag & 256) {
@@ -268,6 +274,11 @@ function resetShapeFlag(vnode) {
   }
   vnode.shapeFlag = shapeFlag
 }
+/**
+ * 获取vnode
+ * @param {*} vnode 
+ * @returns 
+ */
 function getInnerChild(vnode) {
   return vnode.shapeFlag & 128 ? vnode.ssContent : vnode
 }
