@@ -27,7 +27,10 @@
             @change-component="changeComponent"
         ></button-counter>
         <component-c></component-c>
-        <component :is="components"></component>
+        <div style="border: 1px solid yellow">
+            <h1>动态组件 component</h1>
+            <component :is="components"></component>
+        </div>
     </div>
     <script type="module">
         import { createApp, ref } from "../src/index.js"
@@ -40,7 +43,7 @@
         }
         const componentC = {
             components: { componentA, componentB },
-            template: `<h1>Component C</h1><component-a></component-c><component-b></component-c>`
+            template: `<div style="border: 1px solid blue"><h1>C组件中有A组件和B组件</h1><component-a/><component-b/></div>`
         }
         const app = createApp({
             components: { componentA, componentB, componentC },
