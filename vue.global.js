@@ -9409,6 +9409,9 @@ let isInSSRComponentSetup = false
 function setupComponent(instance, isSSR = false) {
   isInSSRComponentSetup = isSSR
   const { props, children } = instance.vnode
+  
+  console.log(instance.propsOptions);
+  console.log(props);
   const isStateful = isStatefulComponent(instance)
   initProps(instance, props, isStateful, isSSR)
   initSlots(instance, children)
@@ -17453,3 +17456,4 @@ export {
   withModifiers,
   withScopeId
 }
+

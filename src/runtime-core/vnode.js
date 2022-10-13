@@ -1,16 +1,11 @@
-import { isClassComponent } from './component.js'
-import {
-  isArray,
-  isFunction,
-  isString,
-  isObject,
-  EMPTY_ARR,
-  extend,
-  normalizeClass,
-  normalizeStyle,
-  isOn
-} from '../shared/index.js'
 import { isProxy } from '../reactivity/index.js'
+import {
+  EMPTY_ARR,
+  extend, isArray,
+  isFunction, isObject, isOn, isString, normalizeClass,
+  normalizeStyle
+} from '../shared/index.js'
+import { isClassComponent } from './component.js'
 import {
   currentRenderingInstance,
   currentScopeId

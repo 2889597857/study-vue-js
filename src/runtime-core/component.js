@@ -2,39 +2,34 @@ import {
   EffectScope,
   markRaw,
   pauseTracking,
+  proxyRefs,
   resetTracking,
-  shallowReadonly,
-  proxyRefs
-} from '../reactivity/index.js'
-import { createAppContext } from './apiCreateApp.js'
-import { normalizePropsOptions } from './componentProps.js'
-import { normalizeEmitsOptions } from './componentEmits.js'
+  shallowReadonly
+} from '../reactivity/index.js';
 import {
   EMPTY_OBJ,
+  extend,
   isFunction,
-  NOOP,
   isObject,
-  NO,
-  makeMap,
-  isPromise,
-  extend
-} from '../shared/index.js'
-import { emit } from './componentEmits.js'
-import { initProps } from './componentProps.js'
-import { initSlots } from './componentSlots.js'
+  NOOP
+} from '../shared/index.js';
+import { createAppContext } from './apiCreateApp.js';
+import { emit, normalizeEmitsOptions } from './componentEmits.js';
+import { initProps, normalizePropsOptions } from './componentProps.js';
+import { initSlots } from './componentSlots.js';
 // 兼容vue2 data
 // import { applyOptions } from './componentOptions.js'
 import {
   PublicInstanceProxyHandlers,
   publicPropertiesMap,
   RuntimeCompiledPublicInstanceProxyHandlers
-} from './componentPublicInstance.js'
+} from './componentPublicInstance.js';
 
-const emptyAppContext = createAppContext()
-let uid = 0
+const emptyAppContext = createAppContext();
+let uid = 0;
 // 创建组件实例
 export function createComponentInstance(vnode, parent, suspense) {
-  const type = vnode.type
+  const type = vnode.type;
   //  type 数据
   // {
   //   props,
@@ -47,7 +42,7 @@ export function createComponentInstance(vnode, parent, suspense) {
   // 继承父组件appContext
   // 如果是是根组件，从vnode上获取appContext
   const appContext =
-    (parent ? parent.appContext : vnode.appContext) || emptyAppContext
+    (parent ? parent.appContext : vnode.appContext) || emptyAppContext;
   const instance = {
     // 组件唯一 id
     uid: uid++,
@@ -71,6 +66,8 @@ export function createComponentInstance(vnode, parent, suspense) {
     scope: new EffectScope(true),
     // 渲染函数
     render: null,
+    // 上下文对象,和 ctx 相同
+    // 开发/生产环境都能使用
     proxy: null,
     exposed: null,
     exposeProxy: null,
@@ -92,6 +89,8 @@ export function createComponentInstance(vnode, parent, suspense) {
     propsDefaults: EMPTY_OBJ,
     inheritAttrs: type.inheritAttrs,
     // 渲染上下文  content 对象
+    // 和 proxy 相同
+    // 生产环境为 undefined
     ctx: EMPTY_OBJ,
     data: EMPTY_OBJ,
     props: EMPTY_OBJ,
@@ -140,133 +139,148 @@ export function createComponentInstance(vnode, parent, suspense) {
     rtc: null,
     // error captured
     ec: null,
-    sp: null
-  }
+    sp: null,
+  };
   // 初始化渲染上下文
-  instance.ctx = { _: instance }
+  instance.ctx = { _: instance };
   // 初始化根组件指针
-  instance.root = parent ? parent.root : instance
+  instance.root = parent ? parent.root : instance;
   // 初始化事件派发方法
   // 使用 bind 把 instance 进行绑定
   // 使用的时候只需要给 event 和参数即可
-  instance.emit = emit.bind(null, instance)
+  instance.emit = emit.bind(null, instance);
   if (vnode.ce) {
-    vnode.ce(instance)
+    vnode.ce(instance);
   }
-  return instance
+  return instance;
 }
 
-export let currentInstance = null
-// 获取组件实例
-export const getCurrentInstance = () => currentInstance
+export let currentInstance = null;
+/**
+ * 获取当前组件实例
+ * @returns
+ */
+export const getCurrentInstance = () => currentInstance;
 
-export const setCurrentInstance = instance => {
-  currentInstance = instance
-  instance.scope.on()
-}
-
+export const setCurrentInstance = (instance) => {
+  currentInstance = instance;
+  instance.scope.on();
+};
+/**
+ * 卸载组件
+ * @returns
+ */
 export const unsetCurrentInstance = () => {
   // 取消数据响应式效果
-  currentInstance && currentInstance.scope.off()
-  currentInstance = null
-}
-
+  currentInstance && currentInstance.scope.off();
+  currentInstance = null;
+};
+/**
+ * 判断是否是一个有状态的组件(函数组件)
+ * @param {object} instance
+ * @returns
+ */
 function isStatefulComponent(instance) {
-  return instance.vnode.shapeFlag & 4
+  return instance.vnode.shapeFlag & 4;
 }
 
 export function setupComponent(instance) {
-  const { props, children } = instance.vnode
+  const { props, children } = instance.vnode;
   // 判断是否是一个有状态的组件
-  const isStateful = isStatefulComponent(instance)
-  // 初始化 props
-  initProps(instance, props, isStateful)
+  const isStateful = isStatefulComponent(instance);
+  console.log(instance.propsOptions);
+  console.log(props);
+  // 初始化 props 绑定事件
+  initProps(instance, props, isStateful);
   // 初始化插槽
-  initSlots(instance, children)
+  initSlots(instance, children);
   // 设置有状态的组件实例
-  const setupResult = isStateful ? setupStatefulComponent(instance) : undefined
+  const setupResult = isStateful ? setupStatefulComponent(instance) : undefined;
 
-  return setupResult
+  return setupResult;
 }
 
 function setupStatefulComponent(instance) {
-  const Component = instance.type
+  const Component = instance.type;
   // 创建渲染代理的属性缓存
-  instance.accessCache = Object.create(null)
+  instance.accessCache = Object.create(null);
   // 创建渲染上下问代理对象
   // instance.ctx
   // 标记代理对象为不会成为响应式对象
-  instance.proxy = markRaw(new Proxy(instance.ctx, PublicInstanceProxyHandlers))
+  instance.proxy = markRaw(
+    new Proxy(instance.ctx, PublicInstanceProxyHandlers)
+  );
   // 获取组件setup函数
-  const { setup } = Component
+  const { setup } = Component;
 
   if (setup) {
     const setupContext = (instance.setupContext =
-      setup.length > 1 ? createSetupContext(instance) : null)
-    // 设置当前组件实例，方便 setup 里面函数执行时获取当前实例
-    setCurrentInstance(instance)
-    pauseTracking()
+      setup.length > 1 ? createSetupContext(instance) : null);
+    // 设置当前组件实例，在 setup 中执行 getCurrentInstance 时获取当前实例 
+    setCurrentInstance(instance);
+    pauseTracking();
     // 执行 setup
     const setupResult =
-      setup && setup(shallowReadonly(instance.props), setupContext)
-    resetTracking()
-    unsetCurrentInstance()
+      setup && setup(shallowReadonly(instance.props), setupContext);
+    resetTracking();
+    unsetCurrentInstance();
     // 处理setup返回值
-    handleSetupResult(instance, setupResult)
+    handleSetupResult(instance, setupResult);
   } else {
-    finishComponentSetup(instance)
+    finishComponentSetup(instance);
   }
 }
 
 function handleSetupResult(instance, setupResult) {
   if (isFunction(setupResult)) {
     // setup 返回渲染函数
-    instance.render = setupResult
+    instance.render = setupResult;
   } else if (isObject(setupResult)) {
     // proxyRefs实现 {{}} 中使用 ref 不用加 value
-    instance.setupState = proxyRefs(setupResult)
+    instance.setupState = proxyRefs(setupResult);
   }
-  finishComponentSetup(instance)
+  finishComponentSetup(instance);
 }
 
-let compile
-let installWithProxy
+let compile;
+let installWithProxy;
 export function registerRuntimeCompiler(_compile) {
-  compile = _compile
-  installWithProxy = i => {
+  compile = _compile;
+  installWithProxy = (i) => {
     if (i.render._rc) {
-      i.withProxy = new Proxy(i.ctx, RuntimeCompiledPublicInstanceProxyHandlers)
+      i.withProxy = new Proxy(
+        i.ctx,
+        RuntimeCompiledPublicInstanceProxyHandlers
+      );
     }
-  }
+  };
 }
 
 function finishComponentSetup(instance) {
-  const Component = instance.type
+  const Component = instance.type;
   // 组件实例上是否有 render 函数
   if (!instance.render) {
     // 模板没有 render 函数
     if (compile && !Component.render) {
-      const template = Component.template
+      const template = Component.template;
       if (template) {
         // 标准化模板/渲染函数
-        const { isCustomElement, compilerOptions } = instance.appContext.config
-        const {
-          delimiters,
-          compilerOptions: componentCompilerOptions
-        } = Component
+        const { isCustomElement, compilerOptions } = instance.appContext.config;
+        const { delimiters, compilerOptions: componentCompilerOptions } =
+          Component;
         const finalCompilerOptions = extend(
           extend({ isCustomElement, delimiters }, compilerOptions),
           componentCompilerOptions
-        )
+        );
         // 运行时编译 编译模板
-        Component.render = compile(template, finalCompilerOptions)
+        Component.render = compile(template, finalCompilerOptions);
         // console.log(Component.render)
       }
     }
     // console.log(instance)
-    instance.render = Component.render || NOOP
+    instance.render = Component.render || NOOP;
     if (installWithProxy) {
-      installWithProxy(instance)
+      installWithProxy(instance);
     }
   }
   //  兼容 vue2 data
@@ -283,26 +297,26 @@ function finishComponentSetup(instance) {
 export function createAttrsProxy(instance) {
   return new Proxy(instance.attrs, {
     get(target, key) {
-      markAttrsAccessed()
-      track(instance, 'get', '$attrs')
-      return target[key]
-    }
-  })
+      markAttrsAccessed();
+      track(instance, 'get', '$attrs');
+      return target[key];
+    },
+  });
 }
 
 export function createSetupContext(instance) {
-  const expose = exposed => {
-    instance.exposed = exposed || {}
-  }
-  let attrs
+  const expose = (exposed) => {
+    instance.exposed = exposed || {};
+  };
+  let attrs;
   return {
     get attrs() {
-      return attrs || (attrs = createAttrsProxy(instance))
+      return attrs || (attrs = createAttrsProxy(instance));
     },
     slots: instance.slots,
     emit: instance.emit,
-    expose
-  }
+    expose,
+  };
 }
 
 export function getExposeProxy(instance) {
@@ -312,52 +326,52 @@ export function getExposeProxy(instance) {
       (instance.exposeProxy = new Proxy(proxyRefs(markRaw(instance.exposed)), {
         get(target, key) {
           if (key in target) {
-            return target[key]
+            return target[key];
           } else if (key in publicPropertiesMap) {
-            return publicPropertiesMap[key](instance)
+            return publicPropertiesMap[key](instance);
           }
-        }
+        },
       }))
-    )
+    );
   }
 }
-const classifyRE = /(?:^|[-_])(\w)/g
-const classify = str =>
-  str.replace(classifyRE, c => c.toUpperCase()).replace(/[-_]/g, '')
+const classifyRE = /(?:^|[-_])(\w)/g;
+const classify = (str) =>
+  str.replace(classifyRE, (c) => c.toUpperCase()).replace(/[-_]/g, '');
 
 export function getComponentName(Component) {
   return isFunction(Component)
     ? Component.displayName || Component.name
-    : Component.name
+    : Component.name;
 }
 export function formatComponentName(instance, Component, isRoot = false) {
-  let name = getComponentName(Component)
+  let name = getComponentName(Component);
   if (!name && Component.__file) {
-    const match = Component.__file.match(/([^/\\]+)\.\w+$/)
+    const match = Component.__file.match(/([^/\\]+)\.\w+$/);
     if (match) {
-      name = match[1]
+      name = match[1];
     }
   }
   if (!name && instance && instance.parent) {
-    const inferFromRegistry = registry => {
+    const inferFromRegistry = (registry) => {
       for (const key in registry) {
         if (registry[key] === Component) {
-          return key
+          return key;
         }
       }
-    }
+    };
     name =
       inferFromRegistry(
         instance.components || instance.parent.type.components
-      ) || inferFromRegistry(instance.appContext.components)
+      ) || inferFromRegistry(instance.appContext.components);
   }
-  return name ? classify(name) : isRoot ? `App` : `Anonymous`
+  return name ? classify(name) : isRoot ? `App` : `Anonymous`;
 }
 /**
  *  是不是一个 class 类型的组件
- * @param {*} value 
- * @returns 
+ * @param {*} value
+ * @returns
  */
 export function isClassComponent(value) {
-  return isFunction(value) && '__vccOpts' in value
+  return isFunction(value) && '__vccOpts' in value;
 }
