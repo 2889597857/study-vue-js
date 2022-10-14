@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e" pages="4">
     <diagram id="ftk_C_JmBCOl0UyG8kWT" name="初始化">
-        <mxGraphModel dx="1303" dy="677" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1564" dy="812" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -184,7 +184,7 @@
                     <mxGeometry x="165.25" y="510" width="86.5" height="25.5" as="geometry"/>
                 </mxCell>
                 <mxCell id="7JnpldnPajgbHcFfG2gb-71" value="updateComponent()" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="343.75" y="740.25" width="116" height="24.5" as="geometry"/>
+                    <mxGeometry x="382.5" y="740.25" width="116" height="24.5" as="geometry"/>
                 </mxCell>
                 <mxCell id="wgJRpWKPK0ZgW9b6pxYg-82" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="4Cl-f1UtTzVU6t0phE9n-95" target="wgJRpWKPK0ZgW9b6pxYg-81" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
@@ -306,7 +306,7 @@
                 <mxCell id="1IU5ooPhNynPvKbHU-Sp-91" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;" parent="1" source="1IU5ooPhNynPvKbHU-Sp-89" target="7JnpldnPajgbHcFfG2gb-69" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="1IU5ooPhNynPvKbHU-Sp-92" value="更新组件" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Helvetica;fontSize=12;fontColor=default;" parent="1" source="1IU5ooPhNynPvKbHU-Sp-89" target="7JnpldnPajgbHcFfG2gb-71" edge="1">
+                <mxCell id="1IU5ooPhNynPvKbHU-Sp-92" value="false&amp;nbsp;更新组件" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontFamily=Helvetica;fontSize=12;fontColor=default;" parent="1" source="1IU5ooPhNynPvKbHU-Sp-89" target="7JnpldnPajgbHcFfG2gb-71" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="1IU5ooPhNynPvKbHU-Sp-89" value="n1==null" style="rhombus;whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
@@ -352,7 +352,7 @@
                 <mxCell id="wgJRpWKPK0ZgW9b6pxYg-81" value="componentUpdateFn" style="whiteSpace=wrap;html=1;rounded=1;" parent="1" vertex="1">
                     <mxGeometry x="350" y="1441" width="128" height="24.5" as="geometry"/>
                 </mxCell>
-                <mxCell id="80" value="挂载组件" style="rounded=1;whiteSpace=wrap;html=1;fontSize=9;" vertex="1" parent="1">
+                <mxCell id="80" value="挂载组件" style="rounded=1;whiteSpace=wrap;html=1;fontSize=9;" parent="1" vertex="1">
                     <mxGeometry x="44.5" y="802.25" width="60" height="20" as="geometry"/>
                 </mxCell>
             </root>

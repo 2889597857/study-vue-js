@@ -188,8 +188,8 @@ export function setupComponent(instance) {
   const { props, children } = instance.vnode;
   // 判断是否是一个有状态的组件
   const isStateful = isStatefulComponent(instance);
-  console.log(instance.propsOptions);
-  console.log(props);
+  // console.log(instance.propsOptions);
+  // console.log(props);
   // 初始化 props 绑定事件
   initProps(instance, props, isStateful);
   // 初始化插槽
@@ -216,7 +216,7 @@ function setupStatefulComponent(instance) {
   if (setup) {
     const setupContext = (instance.setupContext =
       setup.length > 1 ? createSetupContext(instance) : null);
-    // 设置当前组件实例，在 setup 中执行 getCurrentInstance 时获取当前实例 
+    // 设置当前组件实例，在 setup 中执行 getCurrentInstance 时获取当前实例
     setCurrentInstance(instance);
     pauseTracking();
     // 执行 setup

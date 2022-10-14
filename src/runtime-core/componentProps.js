@@ -1,4 +1,4 @@
-import { shallowReactive, toRaw } from '../reactivity/index.js';
+import { shallowReactive, toRaw, trigger } from '../reactivity/index.js';
 import {
   camelize,
   capitalize,

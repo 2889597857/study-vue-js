@@ -1,7 +1,10 @@
-import { makeMap, isVoidTag, isHTMLTag, isSVGTag } from '../shared/index.js'
-import { decodeHtmlBrowser } from './decodeHtmlBrowser.js'
 import { isBuiltInType } from '../compiler-core/utils.js'
+import { isHTMLTag, isSVGTag, isVoidTag, makeMap } from '../shared/index.js'
+import { decodeHtmlBrowser } from './decodeHtmlBrowser.js'
 import { TRANSITION } from './runtimeHelpers.js'
+/**
+ * 是不是 style,iframe,script,noscript 标签
+ */
 const isRawTextContainer = /*#__PURE__*/ makeMap(
   'style,iframe,script,noscript',
   true
