@@ -1,13 +1,10 @@
+import { shallowReadonly, track } from '../reactivity/index.js'
 import {
-  extend,
-  NOOP,
-  EMPTY_OBJ,
-  hasOwn,
+  EMPTY_OBJ, extend, hasOwn,
   isGloballyWhitelisted
 } from '../shared/index.js'
-import { nextTick, queueJob } from './scheduler.js'
 import { resolveMergedOptions, shouldCacheAccess } from './componentOptions.js'
-import { shallowReadonly, track } from '../reactivity/index.js'
+import { nextTick, queueJob } from './scheduler.js'
 export const getPublicInstance = i => {
   if (!i) return null
   if (isStatefulComponent(i)) return getExposeProxy(i) || i.proxy

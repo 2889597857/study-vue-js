@@ -1,12 +1,12 @@
+import { hasChanged, isArray } from '../shared/index.js'
+import { createDep } from './dep.js'
 import {
   activeEffect,
   shouldTrack,
   trackEffects,
   triggerEffects
 } from './effect.js'
-import { createDep } from './dep.js'
-import { isProxy, toRaw, isReactive, toReactive } from './reactive.js'
-import { hasChanged, isArray } from '../shared/index.js'
+import { isProxy, isReactive, toRaw, toReactive } from './reactive.js'
 /**
  * 收集依赖
  * @param {*} ref
@@ -46,6 +46,7 @@ class RefImpl {
     this.dep = undefined
     this.__v_isRef = true
     this._rawValue = __v_isShallow ? value : toRaw(value)
+    // 引用类型时（obj/arr）使用 reactive 函数进行数据劫持
     this._value = __v_isShallow ? value : toReactive(value)
   }
   get value () {

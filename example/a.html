@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>App.component</title>
+  <style>
+    #app>* {
+      margin-bottom: 20px;
+      padding: 0 20px;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity 1s ease;
+    }
+
+    .fade-enter-from,
+    .fade-leave-to {
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <transition name="fade">
+  </transition>
+  <div id="app">
+    <h1 ref="h1" @click="changeComponent()">父组件：App.component</h1>
+    <button-counter class="fade-enter-activ" :style="{border:'1px solid yellow',color:textColor}" :title="components"
+      @change-component="changeComponent">
+    </button-counter>
+    <div style="border: 1px solid red">
+      <h1>动态组件 component</h1>
+      <component :is=" components">
+      </component>
+    </div>
+  </div>
+  <script type="module">
+    import { createApp, reactive, ref } from "../src/index.js"
+    // import { createApp, ref } from "../vue.global.js"
+    const componentA = {
+      template: '<h1>Component A</h1>'
+    }
+    const componentB = {
+      template: '<h1>Component B</h1>'
+    }
+    const app = createApp({
+      components: { componentA, componentB},
+      setup() {
+        const textColor = ref('#333')
+        const components = ref('componentA')
+        const h1 = ref(null)
+        const a = reactive({ a: 1 })
+        const changeComponent = () => {
+          components.value = components.value == 'componentA' ? 'componentB' : 'componentA'
+        }
+        return { components, changeComponent, textColor }
+      },
+    })
+    app.component('button-counter', {
+      props: {
+        title: {
+          type: String,
+          default: "ll"
+        },
+        hello: {
+          type: String,
+          default: "ll"
+        }
+      },
+      emits: ['changeComponent'],
+      setup(prop, { emit }) {
+        const count = ref(0)
+        const change = () => {
+          count.value++
+          emit('changeComponent')
+        }
+        return {
+          count, change
+        }
+      },
+      template: `
+            <div>
+                <h2>全局子组件</h2>
+                <button @click="change">
+                <h2>You clicked me {{ count }} times.</h2>
+                </button>
+                <h2>当前组件为：{{title}}</h2>    
+                <h3>{{hello}}</h3>
+            </div>
+            `
+    })
+    app.mount("#app")
+  </script>
+</body>
+
+</html>

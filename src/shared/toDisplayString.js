@@ -1,12 +1,7 @@
 import {
-  isArray,
-  isMap,
-  isObject,
-  isFunction,
-  isPlainObject,
-  isSet,
-  objectToString,
-  isString
+  isArray, isFunction, isMap,
+  isObject, isPlainObject,
+  isSet, isString, objectToString
 } from './index.js'
 
 export const toDisplayString = val => {
@@ -25,9 +20,8 @@ export const toDisplayString = val => {
 }
 
 const replacer = (_key, val) => {
-  // can't use isRef here since @vue/shared has no deps
   if (val && val.__v_isRef) {
-    // 如果是 ref 递归
+    // 如果是 ref
     return replacer(_key, val.value)
   } else if (isMap(val)) {
     return {

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>App.component</title>
     <style>
+        #app>* {
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
         .fade-enter-active,
         .fade-leave-active {
             transition: opacity 1s ease;
@@ -20,17 +25,19 @@
     <transition name="fade">
     </transition>
     <div id="app">
-        <h1 @click="changeComponent()">父组件：App.component</h1>
-        <button-counter
-            style="border: 1px solid red"
-            :title="components"
-            @change-component="changeComponent"
-        ></button-counter>
+        <h1 ref="h1" @click="changeComponent()">父组件：App.component</h1>
+        <button-counter class="fade-enter-activ" :style="{border:'1px solid yellow',color:textColor}"
+            :title="components" @change-component="changeComponent">
+        </button-counter>
         <component-c></component-c>
-        <component :is="components"></component>
+        <div style="border: 1px solid red">
+            <h1>动态组件 component</h1>
+            <component :is=" components">
+            </component>
+        </div>
     </div>
     <script type="module">
-        import { createApp, ref } from "../src/index.js"
+        import { createApp, reactive, ref } from "../src/index.js"
         // import { createApp, ref } from "../vue.global.js"
         const componentA = {
             template: '<h1>Component A</h1>'
@@ -40,24 +47,31 @@
         }
         const componentC = {
             components: { componentA, componentB },
-            template: `<h1>Component C</h1><component-a></component-c><component-b></component-c>`
+            template: `<div style="border: 1px solid blue"><h1>C组件中有A组件和B组件</h1><component-a/><component-b/></div>`
         }
         const app = createApp({
             components: { componentA, componentB, componentC },
             setup() {
+                const textColor = ref('#333')
                 const components = ref('componentA')
+                const h1 = ref(null)
+                const a = reactive({ a: 1 })
                 const changeComponent = () => {
                     components.value = components.value == 'componentA' ? 'componentB' : 'componentA'
                 }
-                return { components, changeComponent }
+                return { components, changeComponent, textColor }
             },
         })
-
         app.component('button-counter', {
             props: {
                 title: {
                     type: String,
-                    required: true
+                    required: true,
+                    default: "ll"
+                },
+                hello: {
+                    type: String,
+                    // default: "ll"
                 }
             },
             emits: ['changeComponent'],

@@ -1,4 +1,4 @@
-import { extend, isMap, isArray } from '../shared/index.js'
+import { extend, isArray, isMap } from '../shared/index.js'
 import {
   createDep,
   finalizeDepMarkers,
@@ -182,7 +182,7 @@ export function trackEffects(dep) {
     shouldTrack = !dep.has(activeEffect)
   }
   if (shouldTrack) {
-    // 手机依赖
+    // 收集依赖
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
   }

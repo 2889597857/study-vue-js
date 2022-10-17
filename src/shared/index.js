@@ -1,13 +1,13 @@
 import { makeMap } from './makeMap.js'
 
+export * from './domAttrConfig.js'
 export * from './domTagConfig.js'
+export * from './globalsWhitelist.js'
+export * from './looseEqual.js'
 export * from './makeMap.js'
 export * from './normalizeProp.js'
-export * from './toDisplayString.js'
-export * from './globalsWhitelist.js'
-export * from './domAttrConfig.js'
-export * from './looseEqual.js'
 export { PatchFlagNames } from './patchFlagNames.js'
+export * from './toDisplayString.js'
 /**
  * 是不是 {...} or [...]
  * @param {*} val
@@ -24,7 +24,7 @@ export const isMap = val => toTypeString(val) === '[object Map]'
 export const isSet = val => toTypeString(val) === '[object Set]'
 export const isDate = val => val instanceof Date
 /**
- * 是不是对象 {...}
+ * 是不是普通对象 {...}
  * @param {*} val
  * @return {Boolean} Boolean
  */
@@ -63,6 +63,9 @@ export const EMPTY_ARR = Object.freeze([])
 export const NOOP = () => { }
 export const NO = () => false
 export const onRE = /^on[^a-z]/
+/** 
+ * 是否以 ’on‘ 开头
+ */
 export const isOn = key => onRE.test(key)
 /**
  * 判断字符串是不是以 ’onUpdate:‘ 开头
@@ -114,7 +117,7 @@ export const invokeArrayFns = (fns, arg) => {
   }
 }
 /**
- *
+ * 属性值不可枚举
  * @param {*} obj 目标对象
  * @param {*} key 需要添加的属性名
  * @param {*} value 需要添加的属性值
