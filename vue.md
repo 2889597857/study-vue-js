@@ -134,3 +134,19 @@ typeof key == 'string' // true
 1. 如何确保 
 2.  
 3. 
+
+
+挂载组件时才会创建组件实例 mountComponent
+
+### flag
+
+#### shapeFlag
+
+
+
+#### patchFlag
+
+
+
+
+

@@ -167,7 +167,7 @@ export const setCurrentInstance = (instance) => {
   instance.scope.on();
 };
 /**
- * 卸载组件
+ * "卸载"组件
  * @returns
  */
 export const unsetCurrentInstance = () => {
@@ -223,6 +223,7 @@ function setupStatefulComponent(instance) {
     const setupResult =
       setup && setup(shallowReadonly(instance.props), setupContext);
     resetTracking();
+    //
     unsetCurrentInstance();
     // 处理setup返回值
     handleSetupResult(instance, setupResult);
@@ -236,7 +237,7 @@ function handleSetupResult(instance, setupResult) {
     // setup 返回渲染函数
     instance.render = setupResult;
   } else if (isObject(setupResult)) {
-    // proxyRefs实现 {{}} 中使用 ref 不用加 value
+    //实现 proxyRefs  模板{{}}中使用 ref 不用加 value
     instance.setupState = proxyRefs(setupResult);
   }
   finishComponentSetup(instance);

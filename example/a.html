@@ -61,12 +61,11 @@
       props: {
         title: {
           type: String,
-          required: true,
           default: "ll"
         },
         hello: {
           type: String,
-          // default: "ll"
+          default: "ll"
         }
       },
       emits: ['changeComponent'],
@@ -87,6 +86,7 @@
                 <h2>You clicked me {{ count }} times.</h2>
                 </button>
                 <h2>当前组件为：{{title}}</h2>    
+                <h3>{{hello}}</h3>
             </div>
             `
     })

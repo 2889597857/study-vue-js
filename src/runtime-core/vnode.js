@@ -130,7 +130,6 @@ export function createBaseVNode(
   isBlockNode = false,
   needFullChildrenNormalization = false
 ) {
-  console.log(123);
   if (props) {
     // console.log(props);
   }

@@ -1,14 +1,9 @@
-import {
-  normalizeVNode,
-  createVNode,
-  Comment,
-  cloneVNode,
-  isVNode,
-  blockStack
-} from './vnode.js'
-import { isOn, isModelListener } from '../shared/index.js'
+import { isModelListener, isOn } from '../shared/index.js'
 import { isEmitListener } from './componentEmits.js'
 import { setCurrentRenderingInstance } from './componentRenderContext.js'
+import {
+  blockStack, cloneVNode, Comment, createVNode, isVNode, normalizeVNode
+} from './vnode.js'
 
 export function renderComponentRoot(instance) {
   const {

@@ -63,6 +63,9 @@ export const EMPTY_ARR = Object.freeze([])
 export const NOOP = () => { }
 export const NO = () => false
 export const onRE = /^on[^a-z]/
+/** 
+ * 是否以 ’on‘ 开头
+ */
 export const isOn = key => onRE.test(key)
 /**
  * 判断字符串是不是以 ’onUpdate:‘ 开头

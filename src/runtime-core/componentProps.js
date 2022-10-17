@@ -21,8 +21,10 @@ import { InternalObjectKey } from './vnode.js';
 export function initProps(instance, rawProps, isStateful) {
   const props = {};
   const attrs = {};
+  // attrs对象 添加不可枚举属性 InternalObjectKey ，属性值为 1
   def(attrs, InternalObjectKey, 1);
   instance.propsDefaults = Object.create(null);
+  // 设置 props attrs
   setFullProps(instance, rawProps, props, attrs);
   /**
    * propsOptions [{},[]]
@@ -30,12 +32,16 @@ export function initProps(instance, rawProps, isStateful) {
    * hello:{0: false, 1: true, type: ƒ}
    * title: {0: false, 1: true, required: true, default: 'll', type: ƒ}
    */
+
+  // 子组件prop定义了值，父组件未传值的prop给个初始值 undefined
+  // 确保每个子组件每个 prop 都有值
   for (const key in instance.propsOptions[0]) {
     if (!(key in props)) {
       props[key] = undefined;
     }
   }
   {
+    // 开发环境 验证props
     validateProps(rawProps || {}, props, instance);
   }
   if (isStateful) {
@@ -145,6 +151,9 @@ export function updateProps(instance, rawProps, rawPrevProps, optimized) {
 }
 function setFullProps(instance, rawProps, props, attrs) {
   const [options, needCastKeys] = instance.propsOptions;
+  console.log(instance.propsOptions);
+  console.log(instance.emitsOptions);
+
   let hasAttrsChanged = false;
   let rawCastValues;
   if (rawProps) {
@@ -275,6 +284,12 @@ export function normalizePropsOptions(comp, appContext, asMixin = false) {
   cache.set(comp, res);
   return res;
 }
+/**
+ * 字符串首字母是否是 '$'
+ * true or false
+ * @param {string} key
+ * @returns
+ */
 function validatePropName(key) {
   if (key[0] !== '$') {
     return true;
@@ -296,6 +311,12 @@ function getTypeIndex(type, expectedTypes) {
   }
   return -1;
 }
+/**
+ * 验证子组件定义的 props
+ * @param {object} rawProps
+ * @param {object} props
+ * @param {object} instance
+ */
 function validateProps(rawProps, props, instance) {
   const resolvedValues = toRaw(props);
   const options = instance.propsOptions[0];
@@ -310,22 +331,52 @@ function validateProps(rawProps, props, instance) {
     );
   }
 }
+
+/**
+ * dev only
+ * @param {string} name
+ * @param {*} value
+ * @param {object} prop
+ * @param {boolean} isAbsent
+ * @returns
+ */
 function validateProp(name, value, prop, isAbsent) {
   const { type, required, validator } = prop;
+  // required!
+  if (required && isAbsent) {
+    console.log('Missing required prop: "' + name + '"');
+    return;
+  }
+  // missing but optional
   if (value == null && !prop.required) {
     return;
   }
+  // type check
   if (type != null && type !== true) {
     let isValid = false;
     const types = isArray(type) ? type : [type];
     const expectedTypes = [];
+    // value is valid as long as one of the specified types match
     for (let i = 0; i < types.length && !isValid; i++) {
       const { valid, expectedType } = assertType(value, types[i]);
       expectedTypes.push(expectedType || '');
       isValid = valid;
     }
+    if (!isValid) {
+      console.log(getInvalidTypeMessage(name, value, expectedTypes));
+      return;
+    }
+    // custom validator
+    if (validator && !validator(value)) {
+      console.log(
+        'Invalid prop: custom validator check failed for prop "' + name + '".'
+      );
+    }
   }
 }
+/**
+ * dev only
+ */
 const isSimpleType = makeMap('String,Number,Boolean,Function,Symbol,BigInt');
 function assertType(value, type) {
   let valid;
@@ -347,6 +398,9 @@ function assertType(value, type) {
   }
   return { valid, expectedType };
 }
+/**
+ * dev only
+ */
 function getInvalidTypeMessage(name, value, expectedTypes) {
   let message =
     `Invalid prop: type check failed for prop "${name}".` +
@@ -368,6 +422,9 @@ function getInvalidTypeMessage(name, value, expectedTypes) {
   }
   return message;
 }
+/**
+ * dev only
+ */
 function styleValue(value, type) {
   if (type === 'String') {
     return `"${value}"`;
@@ -377,10 +434,16 @@ function styleValue(value, type) {
     return `${value}`;
   }
 }
+/**
+ * dev only
+ */
 function isExplicable(type) {
   const explicitTypes = ['string', 'number', 'boolean'];
   return explicitTypes.some((elem) => type.toLowerCase() === elem);
 }
+/**
+ * dev only
+ */
 function isBoolean(...args) {
   return args.some((elem) => elem.toLowerCase() === 'boolean');
 }
