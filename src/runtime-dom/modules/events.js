@@ -66,6 +66,7 @@ function parseName(name) {
 }
 
 function createInvoker(initialValue, instance) {
+  console.log(initialValue);
   const invoker = (e) => {
     const timeStamp = e.timeStamp || _getNow();
     if (skipTimestampCheck || timeStamp >= invoker.attached - 1) {
