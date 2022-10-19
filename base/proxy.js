@@ -30,7 +30,7 @@ function createArrayInstrumentations() {
         })
     return instrumentations
 }
-function ceateProxy(target) {
+function cerateProxy(target) {
     return new Proxy(target, {
         get(target, key, receiver) {
             const result = Reflect.get(target, key, receiver)
@@ -50,7 +50,7 @@ function ceateProxy(target) {
     })
 }
 
-let a = ceateProxy([...'abcd'])
+let a = cerateProxy([...'abcd'])
 // a['push'] == a.push
 // 先触发 2 次get，在触发 2 次set
 // 第一次 get 获取 push 函数

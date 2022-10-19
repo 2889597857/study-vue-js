@@ -28,6 +28,7 @@ export function baseParse(content, options = {}) {
     getSelection(context, start)
   );
 }
+
 function createParserContext(content, rawOptions) {
   const options = extend({}, defaultParserOptions);
   let key;
@@ -57,17 +58,24 @@ function parseChildren(context, mode, ancestors) {
     const s = context.source;
     let node = undefined;
     if (mode === 0 || mode === 1) {
+      // 是不是插值表达式
       if (!context.inVPre && startsWith(s, context.options.delimiters[0])) {
+        // context.options.delimiters = ['{{','}}'];
         node = parseInterpolation(context, mode);
-      } else if (mode === 0 && s[0] === '<') {
+      }
+      // 是否以 '<' 开头
+      else if (mode === 0 && s[0] === '<') {
         if (s.length === 1) {
           emitError(context, 5, 1);
         } else if (s[1] === '!') {
           if (startsWith(s, '<!--')) {
+            // 注释
             node = parseComment(context);
           } else if (startsWith(s, '<!DOCTYPE')) {
+            // html
             node = parseBogusComment(context);
           } else if (startsWith(s, '<![CDATA[')) {
+            // xml
             if (ns !== 0) {
               node = parseCDATA(context, ancestors);
             } else {
@@ -94,6 +102,7 @@ function parseChildren(context, mode, ancestors) {
             node = parseBogusComment(context);
           }
         } else if (/[a-z]/i.test(s[1])) {
+          // 字母
           node = parseElement(context, ancestors);
         } else if (s[1] === '?') {
           emitError(context, 21, 1);
@@ -277,8 +286,16 @@ function parseElement(context, ancestors) {
   return element;
 }
 const isSpecialTemplateDirective = makeMap(`if,else,else-if,for,slot`);
+/**
+ * 解析标签
+ * @param {object} context
+ * @param {number} type
+ * @param {*} parent
+ * @returns
+ */
 function parseTag(context, type, parent) {
   const start = getCursor(context);
+  // 获取标签 div h1 ... ['<h1','h1']
   const match = /^<\/?([a-z][^\t\r\n\f />]*)/i.exec(context.source);
   const tag = match[1];
   const ns = context.options.getNamespace(tag, parent);
@@ -289,6 +306,7 @@ function parseTag(context, type, parent) {
   if (context.options.isPreTag(tag)) {
     context.inPre = true;
   }
+  // 解析标签的属性
   let props = parseAttributes(context, type);
   if (
     type === 0 &&
@@ -370,9 +388,16 @@ function isComponent(tag, props, context) {
     }
   }
 }
+/**
+ * 解析标签的属性
+ * @param {object} context
+ * @param {number} type
+ * @returns
+ */
 function parseAttributes(context, type) {
   const props = [];
   const attributeNames = new Set();
+  // 循环解析每个 prop , 直到标签闭合处 '>' / '/>'
   while (
     context.source.length > 0 &&
     !startsWith(context.source, '>') &&
@@ -397,6 +422,7 @@ function parseAttributes(context, type) {
     if (/^[^\t\r\n\f />]/.test(context.source)) {
       emitError(context, 15);
     }
+    // 删除空格
     advanceSpaces(context);
   }
   return props;
@@ -404,6 +430,9 @@ function parseAttributes(context, type) {
 function parseAttribute(context, nameSet) {
   const start = getCursor(context);
   const match = /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec(context.source);
+  /**
+   * 属性名
+   */
   const name = match[0];
   if (nameSet.has(name)) {
     emitError(context, 2);
@@ -420,6 +449,9 @@ function parseAttribute(context, nameSet) {
     }
   }
   advanceBy(context, name.length);
+  /**
+   * 属性值
+   */
   let value = undefined;
   if (/^[\t\r\n\f ]*=/.test(context.source)) {
     advanceSpaces(context);
@@ -430,13 +462,22 @@ function parseAttribute(context, nameSet) {
       emitError(context, 13);
     }
   }
+  /**
+   * ref = "h1"
+   * :title = "title"
+   * 完整的prop
+   * loc.source
+   */
   const loc = getSelection(context, start);
+  // 处理特殊属性 指令 v- 属性绑定 :  
   if (!context.inVPre && /^(v-[A-Za-z0-9-]|:|\.|@|#)/.test(name)) {
     const match =
       /(?:^v-([a-z0-9-]+))?(?:(?::|^\.|^@|^#)(\[[^\]]+\]|[^\.]+))?(.+)?$/i.exec(
         name
       );
     let isPropShorthand = startsWith(name, '.');
+    // 判断属性类型
+    // bind on slot
     let dirName =
       match[1] ||
       (isPropShorthand || startsWith(name, ':')
@@ -447,6 +488,7 @@ function parseAttribute(context, nameSet) {
     let arg;
     if (match[2]) {
       const isSlot = dirName === 'slot';
+      // @click 
       const startOffset = name.lastIndexOf(match[2]);
       const loc = getSelection(
         context,
@@ -506,18 +548,27 @@ function parseAttribute(context, nameSet) {
     loc,
   };
 }
+/**
+ * 属性值
+ * @param {*} context
+ * @returns
+ */
 function parseAttributeValue(context) {
   const start = getCursor(context);
   let content;
   const quote = context.source[0];
   const isQuoted = quote === `"` || quote === `'`;
   if (isQuoted) {
+    // 删除第一个引号
     advanceBy(context, 1);
+    // 寻找第二个引号位置
     const endIndex = context.source.indexOf(quote);
     if (endIndex === -1) {
       content = parseTextData(context, context.source.length, 4);
     } else {
+      // 获取属性值
       content = parseTextData(context, endIndex, 4);
+      // 删除第二个引号
       advanceBy(context, 1);
     }
   } else {
@@ -534,7 +585,14 @@ function parseAttributeValue(context) {
   }
   return { content, isQuoted, loc: getSelection(context, start) };
 }
+/**
+ *
+ * @param {object} context
+ * @param {number} mode
+ * @returns
+ */
 function parseInterpolation(context, mode) {
+  //  ['{{','}}']
   const [open, close] = context.options.delimiters;
   const closeIndex = context.source.indexOf(close, open.length);
   if (closeIndex === -1) {
@@ -569,12 +627,23 @@ function parseInterpolation(context, mode) {
     loc: getSelection(context, start),
   };
 }
+/**
+ * 处理模板字符串，
+ * 找到 ']]>' '<' '{{' 位置，
+ * 对位置前的字符串进行处理并返回
+ * @param {*} context
+ * @param {*} mode
+ * @returns
+ */
 function parseText(context, mode) {
+  // endTokens 为 [']]>'] or ['<','{{']
   const endTokens = mode === 3 ? [']]>'] : ['<', context.options.delimiters[0]];
+  // context.source 为模板字符串
   let endIndex = context.source.length;
   for (let i = 0; i < endTokens.length; i++) {
     const index = context.source.indexOf(endTokens[i], 1);
     if (index !== -1 && endIndex > index) {
+      // 找到字符，并且字符串长度大于字符出现的位置
       endIndex = index;
     }
   }
@@ -582,6 +651,13 @@ function parseText(context, mode) {
   const content = parseTextData(context, endIndex, mode);
   return { type: 2, content, loc: getSelection(context, start) };
 }
+/**
+ *
+ * @param {*} context
+ * @param {*} length
+ * @param {*} mode
+ * @returns
+ */
 function parseTextData(context, length, mode) {
   const rawText = context.source.slice(0, length);
   advanceBy(context, length);
@@ -611,12 +687,25 @@ function getSelection(context, start, end) {
 function last(xs) {
   return xs[xs.length - 1];
 }
+/**
+ *
+ * @param {string} source
+ * @param {string} searchString
+ * @returns
+ */
 function startsWith(source, searchString) {
   return source.startsWith(searchString);
 }
+/**
+ *
+ * @param {object} context
+ * @param {number} numberOfCharacters
+ */
 function advanceBy(context, numberOfCharacters) {
   const { source } = context;
+  // 寻找 numberOfCharacters 位置前的换行符，更新 offset line column
   advancePositionWithMutation(context, source, numberOfCharacters);
+  // 删除 numberOfCharacters 之前字符
   context.source = source.slice(numberOfCharacters);
 }
 function advanceSpaces(context) {
@@ -625,6 +714,13 @@ function advanceSpaces(context) {
     advanceBy(context, match[0].length);
   }
 }
+/**
+ * 获取新字符串裁切位置
+ * @param {*} context 
+ * @param {*} start 
+ * @param {*} numberOfCharacters 
+ * @returns 
+ */
 function getNewPosition(context, start, numberOfCharacters) {
   return advancePositionWithClone(
     start,
@@ -640,6 +736,9 @@ function emitError(context, code, offset, loc = getCursor(context)) {
 }
 
 function isEnd(context, mode, ancestors) {
+  /**
+   * 模板
+   */
   const s = context.source;
   switch (mode) {
     case 0:

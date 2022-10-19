@@ -274,6 +274,8 @@ function finishComponentSetup(instance) {
           componentCompilerOptions
         );
         // 运行时编译 编译模板
+        console.log(Component)
+
         Component.render = compile(template, finalCompilerOptions);
         // console.log(Component.render)
       }

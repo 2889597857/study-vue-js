@@ -1,21 +1,9 @@
+import { extend, hyphenate, isString } from '../shared/index.js'
 import { createCallExpression, createObjectExpression } from './ast.js'
 import {
-  MERGE_PROPS,
-  TELEPORT,
-  SUSPENSE,
-  KEEP_ALIVE,
-  BASE_TRANSITION,
-  TO_HANDLERS,
-  NORMALIZE_PROPS,
-  GUARD_REACTIVE_PROPS,
-  CREATE_BLOCK,
-  CREATE_ELEMENT_BLOCK,
-  CREATE_VNODE,
-  CREATE_ELEMENT_VNODE,
-  WITH_MEMO,
-  OPEN_BLOCK
+  BASE_TRANSITION, CREATE_BLOCK,
+  CREATE_ELEMENT_BLOCK, CREATE_ELEMENT_VNODE, CREATE_VNODE, GUARD_REACTIVE_PROPS, KEEP_ALIVE, MERGE_PROPS, NORMALIZE_PROPS, OPEN_BLOCK, SUSPENSE, TELEPORT, TO_HANDLERS, WITH_MEMO
 } from './runtimeHelpers.js'
-import { isString, hyphenate, extend } from '../shared/index.js'
 
 export const isStaticExp = p => p.type === 4 && p.isStatic
 export const isBuiltInType = (tag, expected) =>
@@ -117,6 +105,7 @@ export function getInnerRange (loc, offset, length) {
   }
   return newLoc
 }
+
 export function advancePositionWithClone (
   pos,
   source,
@@ -128,6 +117,13 @@ export function advancePositionWithClone (
     numberOfCharacters
   )
 }
+/**
+ * 寻找 numberOfCharacters 位置前的换行符，更新 offset line column
+ * @param {*} pos 
+ * @param {*} source 
+ * @param {*} numberOfCharacters 
+ * @returns 
+ */
 export function advancePositionWithMutation (
   pos,
   source,
@@ -135,6 +131,7 @@ export function advancePositionWithMutation (
 ) {
   let linesCount = 0
   let lastNewLinePos = -1
+  // 寻找换行符位置
   for (let i = 0; i < numberOfCharacters; i++) {
     if (source.charCodeAt(i) === 10) {
       linesCount++
