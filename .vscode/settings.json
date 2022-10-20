@@ -5,5 +5,6 @@
         "vnode",
         "xlink"
     ],
-    "commentTranslate.source": "Bing"
+    "commentTranslate.source": "Bing",
+    "liveServer.settings.port": 5558
 }

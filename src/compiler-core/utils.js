@@ -4,10 +4,18 @@ import {
   BASE_TRANSITION, CREATE_BLOCK,
   CREATE_ELEMENT_BLOCK, CREATE_ELEMENT_VNODE, CREATE_VNODE, GUARD_REACTIVE_PROPS, KEEP_ALIVE, MERGE_PROPS, NORMALIZE_PROPS, OPEN_BLOCK, SUSPENSE, TELEPORT, TO_HANDLERS, WITH_MEMO
 } from './runtimeHelpers.js'
-
+/**
+ * type 等于 4 返回 isStatic
+ */
 export const isStaticExp = p => p.type === 4 && p.isStatic
 export const isBuiltInType = (tag, expected) =>
   tag === expected || tag === hyphenate(expected)
+/**
+ * 内置组件
+ * Teleport Suspense KeepAlive BaseTransition
+ * @param {string} tag 
+ * @returns 
+ */
 export function isCoreComponent (tag) {
   if (isBuiltInType(tag, 'Teleport')) {
     return TELEPORT
@@ -24,6 +32,7 @@ export const isSimpleIdentifier = name => !nonIdentifierRE.test(name)
 const validFirstIdentCharRE = /[A-Za-z_$\xA0-\uFFFF]/
 const validIdentCharRE = /[\.\?\w$\xA0-\uFFFF]/
 const whitespaceRE = /\s+[.[]\s*|\s*[.[]\s+/g
+
 export const isMemberExpressionBrowser = path => {
   path = path.trim().replace(whitespaceRE, s => s.trim())
   let state = 0

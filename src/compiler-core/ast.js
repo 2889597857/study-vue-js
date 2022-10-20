@@ -48,6 +48,8 @@ export function createVNodeCall (
       context.helper(WITH_DIRECTIVES)
     }
   }
+
+  
   return {
     type: 13,
     tag,
