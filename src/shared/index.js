@@ -68,6 +68,7 @@ export const onRE = /^on[^a-z]/
  */
 export const isOn = key => onRE.test(key)
 /**
+ * 监听器
  * 判断字符串是不是以 ’onUpdate:‘ 开头
  * @param {*} key
  * @returns

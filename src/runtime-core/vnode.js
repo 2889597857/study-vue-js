@@ -130,9 +130,6 @@ export function createBaseVNode(
   isBlockNode = false,
   needFullChildrenNormalization = false
 ) {
-  if (props) {
-    // console.log(props);
-  }
   const vnode = {
     __v_isVNode: true,
     __v_skip: true,
@@ -225,7 +222,7 @@ function _createVNode(
     if (isObject(style)) {
       if (isProxy(style) && !isArray(style)) {
         // style 是 proxy 且不是数组
-        // 复制 style
+        // 转为普通对象
         style = extend({}, style);
       }
       props.style = normalizeStyle(style);
@@ -253,6 +250,12 @@ function _createVNode(
     true
   );
 }
+/**
+ * props 是否是响应式
+ * 是转为普通对象
+ * @param {*} props 
+ * @returns 
+ */
 export function guardReactiveProps(props) {
   if (!props) return null;
   return isProxy(props) || InternalObjectKey in props
@@ -351,6 +354,7 @@ export function normalizeChildren(vnode, children) {
   } else if (isArray(children)) {
     type = 16;
   } else if (typeof children === 'object') {
+    // shapeFlag = 1 or 64
     if (shapeFlag & (1 | 64)) {
       const slot = children.default;
       if (slot) {

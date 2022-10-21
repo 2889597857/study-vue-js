@@ -94,7 +94,6 @@ export function isEmitListener(options, key) {
   if (!options || !isOn(key)) {
     return false;
   }
-  console.log(key);
   key = key.slice(2).replace(/Once$/, '');
   console.log(key);
   return (
