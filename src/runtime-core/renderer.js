@@ -1,43 +1,28 @@
-import { createAppAPI } from './apiCreateApp.js'
+import { pauseTracking, ReactiveEffect, resetTracking } from '../reactivity/index.js'
 import {
-  Text,
-  Fragment,
-  Comment,
-  cloneIfMounted,
-  normalizeVNode,
-  createVNode,
-  isSameVNodeType,
-  Static,
-  invokeVNodeHook
-} from './vnode.js'
-import { createComponentInstance, setupComponent } from './component.js'
-import { isKeepAlive } from './components/KeepAlive.js'
-import { ReactiveEffect } from '../reactivity/index.js'
+  EMPTY_ARR, EMPTY_OBJ,
+  invokeArrayFns, isArray, isReservedProp
+} from '../shared/index.js'
 import { isAsyncWrapper } from './apiAsyncComponent.js'
+import { createAppAPI } from './apiCreateApp.js'
+import { createComponentInstance, setupComponent } from './component.js'
+import { updateProps } from './componentProps.js'
 import {
   renderComponentRoot,
   shouldUpdateComponent,
   updateHOCHostEl
 } from './componentRenderUtils.js'
-import { updateProps } from './componentProps.js'
+import { isKeepAlive } from './components/KeepAlive.js'
+import { queueEffectWithSuspense } from './components/Suspense.js'
 import { updateSlots } from './componentSlots.js'
 import { invokeDirectiveHook } from './directives.js'
-import {
-  queueJob,
-  flushPostFlushCbs,
-  invalidateJob,
-  flushPreFlushCbs
-} from './scheduler.js'
-import { queueEffectWithSuspense } from './components/Suspense.js'
-import {
-  isReservedProp,
-  isArray,
-  EMPTY_OBJ,
-  invokeArrayFns,
-  EMPTY_ARR
-} from '../shared/index.js'
 import { setRef } from './rendererTemplateRef.js'
-import { pauseTracking, resetTracking } from '../reactivity/index.js'
+import {
+  flushPostFlushCbs, flushPreFlushCbs, invalidateJob, queueJob
+} from './scheduler.js'
+import {
+  cloneIfMounted, Comment, createVNode, Fragment, invokeVNodeHook, isSameVNodeType, normalizeVNode, Static, Text
+} from './vnode.js'
 
 export const queuePostRenderEffect = queueEffectWithSuspense
 
@@ -732,6 +717,7 @@ function baseCreateRenderer(options) {
         const { bm, m, parent } = instance
         const isAsyncWrapperVNode = isAsyncWrapper(initialVNode)
         toggleRecurse(instance, false)
+        // 生命周期钩子 - beforeMount hook
         if (bm) {
           invokeArrayFns(bm)
         }
