@@ -1,5 +1,5 @@
-const doc = typeof document !== 'undefined' ? document : null
-const svgNS = 'http://www.w3.org/2000/svg'
+const doc = typeof document !== 'undefined' ? document : null;
+const svgNS = 'http://www.w3.org/2000/svg';
 
 export const nodeOps = {
   /**
@@ -9,16 +9,16 @@ export const nodeOps = {
    * @param {*} anchor
    */
   insert: (child, parent, anchor) => {
-    parent.insertBefore(child, anchor || null)
+    parent.insertBefore(child, anchor || null);
   },
   /**
    * 删除节点
    * @param {Element} child
    */
-  remove: child => {
-    const parent = child.parentNode
+  remove: (child) => {
+    const parent = child.parentNode;
     if (parent) {
-      parent.removeChild(child)
+      parent.removeChild(child);
     }
   },
   /**
@@ -32,49 +32,62 @@ export const nodeOps = {
   createElement: (tag, isSVG, is, props) => {
     const el = isSVG
       ? doc.createElementNS(svgNS, tag)
-      : doc.createElement(tag, is ? { is } : undefined)
+      : doc.createElement(tag, is ? { is } : undefined);
     // select 是否可以多选
     if (tag === 'select' && props && props.multiple != null) {
-      el.setAttribute('multiple', props.multiple)
+      el.setAttribute('multiple', props.multiple);
     }
-    return el
+    return el;
   },
   /**
    * 创建文本节点
    * @param {*} text
    * @returns
    */
-  createText: text => doc.createTextNode(text),
-  createComment: text => doc.createComment(text),
+  createText: (text) => doc.createTextNode(text),
+  /**
+   * 创建注释节点
+   * @param {*} text
+   * @returns
+   */
+  createComment: (text) => doc.createComment(text),
   setText: (node, text) => {
-    node.nodeValue = text
+    node.nodeValue = text;
   },
   setElementText: (el, text) => {
-    el.textContent = text
+    el.textContent = text;
   },
-  parentNode: node => node.parentNode,
-  nextSibling: node => node.nextSibling,
-  querySelector: selector => doc.querySelector(selector),
-  setScopeId (el, id) {
-    el.setAttribute(id, '')
+  parentNode: (node) => node.parentNode,
+  nextSibling: (node) => node.nextSibling,
+  querySelector: (selector) => doc.querySelector(selector),
+  setScopeId(el, id) {
+    el.setAttribute(id, '');
   },
-  cloneNode (el) {
-    const cloned = el.cloneNode(true)
+  cloneNode(el) {
+    const cloned = el.cloneNode(true);
 
     if (`_value` in el) {
-      cloned._value = el._value
+      cloned._value = el._value;
     }
-    return cloned
+    return cloned;
   },
 
-  insertStaticContent (content, parent, anchor, isSVG) {
+  insertStaticContent(content, parent, anchor, isSVG, start, end) {
     // <parent> before | first ... last | anchor </parent>
     const before = anchor ? anchor.previousSibling : parent.lastChild
-    let template = staticTemplateCache.get(content)
-    if (!template) {
-      const t = doc.createElement('template')
-      t.innerHTML = isSVG ? `<svg>${content}</svg>` : content
-      template = t.content
+    // #5308 can only take cached path if:
+    // - has a single root node
+    // - nextSibling info is still available
+    if (start && (start === end || start.nextSibling)) {
+      // cached
+      while (true) {
+        parent.insertBefore(start.cloneNode(true), anchor)
+        if (start === end || !(start = start.nextSibling)) break
+      }
+    } else {
+      // fresh insert
+      templateContainer.innerHTML = isSVG ? `<svg>${content}</svg>` : content
+      const template = templateContainer.content
       if (isSVG) {
         // remove outer svg wrapper
         const wrapper = template.firstChild
@@ -83,9 +96,8 @@ export const nodeOps = {
         }
         template.removeChild(wrapper)
       }
-      staticTemplateCache.set(content, template)
+      parent.insertBefore(template, anchor)
     }
-    parent.insertBefore(template.cloneNode(true), anchor)
     return [
       // first
       before ? before.nextSibling : parent.firstChild,
@@ -93,4 +105,4 @@ export const nodeOps = {
       anchor ? anchor.previousSibling : parent.lastChild
     ]
   }
-}
+};

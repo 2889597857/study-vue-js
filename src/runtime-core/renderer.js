@@ -376,7 +376,7 @@ function baseCreateRenderer(options) {
       invokeVNodeHook(vnodeHook, parentComponent, n2, n1)
     }
     if (dirs) {
-      // console.log('指令：beforeUpdate')
+      // 指令：beforeUpdate
       invokeDirectiveHook(n2, n1, parentComponent, 'beforeUpdate')
     }
     parentComponent && toggleRecurse(parentComponent, true)
@@ -407,6 +407,7 @@ function baseCreateRenderer(options) {
     }
     if (patchFlag > 0) {
       if (patchFlag & 16) {
+        // FULL_PROPS props具有动态的key，与CLASS、STYLE、PROPS冲突
         patchProps(
           el,
           n2,
@@ -417,14 +418,17 @@ function baseCreateRenderer(options) {
           isSVG
         )
       } else {
+        // CLASS
         if (patchFlag & 2) {
           if (oldProps.class !== newProps.class) {
             hostPatchProp(el, 'class', null, newProps.class, isSVG)
           }
         }
+        // STYLE
         if (patchFlag & 4) {
           hostPatchProp(el, 'style', oldProps.style, newProps.style, isSVG)
         }
+        // PROPS 具有动态的非class和style的props, prop 或 attrs 
         if (patchFlag & 8) {
           const propsToUpdate = n2.dynamicProps
           for (let i = 0; i < propsToUpdate.length; i++) {
@@ -447,6 +451,7 @@ function baseCreateRenderer(options) {
           }
         }
       }
+      // TEXT 动态textContent的元素
       if (patchFlag & 1) {
         if (n1.children !== n2.children) {
           hostSetElementText(el, n2.children)

@@ -1,5 +1,5 @@
-import { patchClass, patchStyle, patchAttr, patchDOMProp } from './modules.js'
-import { isOn, isModelListener } from '../shared/index.js'
+import { isModelListener, isOn } from '../shared/index.js'
+import { patchAttr, patchClass, patchDOMProp, patchStyle } from './modules.js'
 import { patchEvent } from './modules/events.js'
 
 const nativeOnRE = /^on[a-z]/
