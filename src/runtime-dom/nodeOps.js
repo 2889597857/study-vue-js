@@ -51,6 +51,11 @@ export const nodeOps = {
    * @returns
    */
   createComment: (text) => doc.createComment(text),
+ /**
+   * 设置文本节点文字
+   * @param {*} text
+   * @returns
+   */
   setText: (node, text) => {
     node.nodeValue = text;
   },

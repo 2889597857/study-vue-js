@@ -95,7 +95,6 @@ export function isEmitListener(options, key) {
     return false;
   }
   key = key.slice(2).replace(/Once$/, '');
-  console.log(key);
   return (
     hasOwn(options, key[0].toLowerCase() + key.slice(1)) || hasOwn(options, key)
   );
