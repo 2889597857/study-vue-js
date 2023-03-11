@@ -10,7 +10,7 @@
   SUSPENSE: 1 << 7, // 128 表示vnode描述的是个suspense组件
   COMPONENT_SHOULD_KEEP_ALIVE: 1 << 8, // 256 表示需要被keep-live的有状态组件
   COMPONENT_KEPT_ALIVE: 1 << 9,// 512 已经被keep-live的有状态组件
-  COMPONENT // 6 组件，有状态组件和函数式组件的统称
+  COMPONENT: 1 << 1 | 1 << 2// 6 组件，有状态组件和函数式组件的统称
 }
 
 COMPONENT = ShapeFlags.STATEFUL_COMPONENT | ShapeFlags.FUNCTIONAL_COMPONENT

@@ -1,9 +1,9 @@
+import { pauseTracking, resetTracking } from '../reactivity/index.js'
 import {
   currentInstance,
   setCurrentInstance,
   unsetCurrentInstance
 } from './component.js'
-import { pauseTracking, resetTracking } from '../reactivity/index.js'
 /**
  *
  * @param {Object} type  - 生命周期类型
@@ -29,7 +29,7 @@ export function injectHook(type, hook, target = currentInstance, prepend = false
         pauseTracking()
         // 设置组件实例
         setCurrentInstance(target)
-        // console.log(hook)
+        // 执行生命周期函数
         const res = hook(args)
         unsetCurrentInstance()
         // 恢复收集

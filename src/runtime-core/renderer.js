@@ -636,6 +636,7 @@ function baseCreateRenderer(options) {
     n2.slotScopeIds = slotScopeIds
     if (n1 == null) {
       if (n2.shapeFlag & 512) {
+        // keep-alive 组件
         parentComponent.ctx.activate(n2, container, anchor, isSVG)
       } else {
         mountComponent(
@@ -1133,7 +1134,7 @@ function baseCreateRenderer(options) {
     if (shapeFlag & 64) {
       type.move(vnode, container, anchor, internals)
       return
-    }
+    } 
     if (type === Fragment) {
       hostInsert(el, container, anchor)
       for (let i = 0; i < children.length; i++) {
@@ -1190,6 +1191,7 @@ function baseCreateRenderer(options) {
     if (ref != null) {
       setRef(ref, null, parentSuspense, vnode, true)
     }
+    // keep-alive 组件
     if (shapeFlag & 256) {
       parentComponent.ctx.deactivate(vnode)
       return

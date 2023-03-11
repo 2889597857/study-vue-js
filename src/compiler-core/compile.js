@@ -36,7 +36,7 @@ export function baseCompile (template, options = {}) {
   const prefixIdentifiers = !true
 
   const ast = isString(template) ? baseParse(template, options) : template
-  console.log(ast);
+  // console.log(ast);
   const [nodeTransforms, directiveTransforms] = getBaseTransformPreset()
   transform(
     ast,

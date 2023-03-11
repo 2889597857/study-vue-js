@@ -1,4 +1,4 @@
-import { isString, isArray, isObject } from './index.js'
+import { isArray, isObject, isString } from './index.js'
 export function normalizeStyle (value) {
   if (isArray(value)) {
     const res = {}
@@ -34,7 +34,7 @@ export function parseStringStyle (cssText) {
   })
   return ret
 }
-// 处理 class
+// 处理 class 拼接 class
 export function normalizeClass (value) {
   let res = ''
   // 是不是字符串?

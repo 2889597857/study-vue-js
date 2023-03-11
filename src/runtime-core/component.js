@@ -232,7 +232,7 @@ function setupStatefulComponent(instance) {
   }
 }
 
-function handleSetupResult(instance, setupResult) {
+export function handleSetupResult(instance, setupResult) {
   if (isFunction(setupResult)) {
     // setup 返回渲染函数
     instance.render = setupResult;

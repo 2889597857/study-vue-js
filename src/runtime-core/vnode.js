@@ -404,7 +404,10 @@ export function mergeProps(...args) {
       } else if (key === 'style') {
         ret.style = normalizeStyle([ret.style, toMerge.style]);
       } else if (isOn(key)) {
+        // on 开头的事件
+        // 现有的事件
         const existing = ret[key];
+        // 传入的事件
         const incoming = toMerge[key];
         if (
           incoming &&

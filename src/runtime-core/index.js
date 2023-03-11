@@ -108,4 +108,4 @@ export {
 } from './components/BaseTransition.js'
 // export { Teleport, TeleportProps } from './components/Teleport'
 // export { Suspense, SuspenseProps } from './components/Suspense'
-export { KeepAlive, } from './components/KeepAlive.js'
+export { KeepAlive,onActivated,onDeactivated } from './components/KeepAlive.js'
