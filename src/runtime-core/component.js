@@ -278,8 +278,9 @@ function finishComponentSetup(instance) {
         // console.log(Component.render)
       }
     }
-    // console.log(instance)
+    console.log(instance)
     instance.render = Component.render || NOOP;
+    console.log(instance.render);
     if (installWithProxy) {
       installWithProxy(instance);
     }

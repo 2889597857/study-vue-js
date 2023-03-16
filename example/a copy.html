@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>App.component</title>
+  <style>
+    #app>* {
+      margin-bottom: 20px;
+      padding: 0 20px;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity 1s ease;
+    }
+
+    .fade-enter-from,
+    .fade-leave-to {
+      opacity: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    {{a}}-{{c}}-{{b}}
+    <button @click="b=b+1">ss</button>
+    <button @click="c=c+1">ss</button>
+  </div>
+  <script type="module">
+    import { createApp,watch, reactive, ref } from "../src/index.js"
+    const app = createApp({
+      setup() {
+        const a = ref(0)
+        const b = ref(0)
+        const c = ref(0)
+        watch(b,(newVal)=>{
+          a.value = newVal * 2
+          c.value = a.value + c.value
+        })
+        return { a , b,c}
+      },
+    })
+ 
+    app.mount("#app")
+  </script>
+</body>
+
+</html>
