@@ -1,4 +1,4 @@
-import { isString, isArray, camelize } from '../shared/index.js'
+import { camelize, isArray, isSpecialBooleanAttr, isString } from '../shared/index.js'
 // patchClass
 export function patchClass (el, value, isSVG = false) {
   // directly setting className should be faster than setAttribute in theory

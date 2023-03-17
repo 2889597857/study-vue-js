@@ -1,29 +1,20 @@
 import {
-  isRef,
+  isReactive, isRef,
   isShallow,
-  ReactiveEffect,
-  isReactive
+  ReactiveEffect
 } from '../reactivity/index.js'
 import {
-  EMPTY_OBJ,
-  isObject,
-  isArray,
-  isFunction,
-  isString,
-  hasChanged,
-  NOOP,
-  remove,
-  isMap,
-  isSet,
-  isPlainObject
+  EMPTY_OBJ, hasChanged, isArray,
+  isFunction, isMap, isObject, isPlainObject, isSet, isString, NOOP,
+  remove
 } from '../shared/index.js'
-import { queuePreFlushCb } from './scheduler.js'
 import {
   currentInstance,
   setCurrentInstance,
   unsetCurrentInstance
 } from './component.js'
 import { queuePostRenderEffect } from './renderer.js'
+import { queuePreFlushCb } from './scheduler.js'
 
 export function watchEffect(effect, options) {
   return doWatch(effect, null, options)

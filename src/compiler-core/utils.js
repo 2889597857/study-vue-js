@@ -155,11 +155,7 @@ export function advancePositionWithMutation (
       : numberOfCharacters - lastNewLinePos
   return pos
 }
-export function assert (condition, msg) {
-  if (!condition) {
-    throw new Error(msg || `unexpected compiler condition`)
-  }
-}
+
 export function findDir (node, name, allowEmpty = false) {
   for (let i = 0; i < node.props.length; i++) {
     const p = node.props[i]

@@ -33,6 +33,9 @@ let preFlushIndex = 0
  * 允许插队，按 id 从小到大执行
  */
 const pendingPostFlushCbs = []
+/**
+ * 执行队列
+ */
 let activePostFlushCbs = null
 let postFlushIndex = 0
 // 组件更新时异步的
@@ -180,6 +183,7 @@ export function flushPostFlushCbs() {
     // 执行前去重
     const deduped = [...new Set(pendingPostFlushCbs)]
     pendingPostFlushCbs.length = 0
+    // 已经任务队列正在执行
     if (activePostFlushCbs) {
       activePostFlushCbs.push(...deduped)
       return
@@ -203,7 +207,7 @@ export function flushPostFlushCbs() {
  */
 const getId = job => (job.id == null ? Infinity : job.id)
 /**
- * 开始执行三个队列中的任务
+ * 开始执行组件更新任务,执行完,执行Post任务队列
  */
 function flushJobs() {
   isFlushPending = false

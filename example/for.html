@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>DOM　REF</title>
+
+</head>
+
+<body>
+  <div id="app">
+   <p v-for="(item,index) of a" :key="index"  >{{item.name}}</p> 
+  </div>
+  <script type="module">
+    import {createApp, ref, reactive, computed, watch, toRefs} from "../src/index.js"
+      //  import { createApp, ref, reactive, computed, watch, toRefs}  from '../vue.global.js';
+    const app = createApp({
+      setup() {
+        const a = ref(              [
+                { id: 1, name: 'HTML' },
+                { id: 2, name: 'CSS' },
+                { id: 3, name: 'JavaScript' },
+                { id: 4, name: 'Vue' }
+              ])
+        let bc = 0
+
+        const b = () => {
+          console.log(Boolean(bc++));
+        }
+        return { a, b }
+      },
+    })
+ 
+    app.mount("#app")
+  </script>
+</body>
+
+</html>

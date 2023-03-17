@@ -1,11 +1,11 @@
-import { isString, isObject, isArray } from '../../shared/index.js'
+import { isArray, isObject, isString } from '../../shared/index.js';
 /**
  * 
- * @param {*} source 
- * @param {*} renderItem 
- * @param {*} cache 
+ * @param {*} source 需要循环的数据
+ * @param {*} renderItem 渲染函数
+ * @param {*} cache 缓存
  * @param {*} index 
- * @returns VNode []
+ * @returns VNode [] 返回值 vnode 数组
  */
 export function renderList(source, renderItem, cache, index) {
   console.log(source);

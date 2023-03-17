@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>DOM　REF</title>
+
+</head>
+
+<body>
+  <div id="app">
+   <p ref="aa">123</p> 
+  </div>
+  <script type="module">
+    import {createApp, ref, reactive, computed, watch, toRefs} from "../src/index.js"
+      //  import { createApp, ref, reactive, computed, watch, toRefs}  from '../vue.global.js';
+    const app = createApp({
+      setup() {
+        const aa = ref(null)
+        const b = 123
+        watch(aa,(newVal,oldVal)=>{
+          console.log(oldVal);
+          console.log(newVal);
+        })
+        return { aa ,b}
+      },
+    })
+ 
+    app.mount("#app")
+  </script>
+</body>
+
+</html>
