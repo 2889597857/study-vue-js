@@ -1,31 +1,18 @@
 import {
-  isObject,
-  hasOwn,
-  isSymbol,
-  hasChanged,
-  isArray,
-  isIntegerKey,
-  extend,
-  makeMap
+  extend, hasChanged, hasOwn, isArray,
+  isIntegerKey, isObject, isSymbol, makeMap
 } from '../shared/index.js'
 import {
-  track,
-  trigger,
   ITERATE_KEY,
   pauseTracking,
-  resetTracking
+  resetTracking, track,
+  trigger
 } from './effect.js'
-import { isRef } from './ref.js'
 import {
-  reactive,
-  toRaw,
-  readonly,
   isReadonly,
-  isShallow,
-  reactiveMap,
-  shallowReadonlyMap,
-  shallowReactiveMap
+  isShallow, reactive, reactiveMap, readonly, readonlyMap, shallowReactiveMap, shallowReadonlyMap, toRaw
 } from './reactive.js'
+import { isRef } from './ref.js'
 /**
  * `__proto__,__v_isRef,__isVue` 是不是其中之一
  */
@@ -69,6 +56,7 @@ function createArrayInstrumentations() {
       }
     })
     // 改变数组长度的方法
+    // 即会读取数组的 length 属性，又会设置数组的 length 属性·1
     ;['push', 'pop', 'shift', 'unshift', 'splice'].forEach(key => {
       instrumentations[key] = function (...args) {
         // 执行前禁用依赖收集
@@ -98,7 +86,7 @@ function createGetter(isReadonly = false, shallow = false) {
     } else if (key === '__v_isShallow') {
       return shallow
     } else if (
-      // 如果访问的 key 是 __v_raw，并且 receiver == target.__v_readonly || receiver == target.__v_reactive
+      // 如果访问的 key 是 原始值，并且在map缓存中，
       key === '__v_raw' &&
       receiver ===
       (isReadonly
@@ -167,7 +155,7 @@ function createSetter(shallow = false) {
         value = toRaw(value)
         oldValue = toRaw(oldValue)
       }
-      // 当前对象是数组 旧值为 ref ，新值不是 ref
+      // 当前对象不是数组 旧值为 ref ，新值不是 ref
       if (!isArray(target) && isRef(oldValue) && !isRef(value)) {
         oldValue.value = value
         return true
@@ -185,6 +173,7 @@ function createSetter(shallow = false) {
         ? Number(key) < target.length
         : hasOwn(target, key)
     const result = Reflect.set(target, key, value, receiver)
+    // 屏蔽由原型引起的更新
     if (target === toRaw(receiver)) {
       if (!hadKey) {
         // 添加数据
