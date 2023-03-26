@@ -52,7 +52,7 @@ export const nodeOps = {
    */
   createComment: (text) => doc.createComment(text),
  /**
-   * 设置文本节点文字
+   * 设置文本节点的文字
    * @param {*} text
    * @returns
    */
@@ -62,12 +62,17 @@ export const nodeOps = {
   setElementText: (el, text) => {
     el.textContent = text;
   },
+  /** 父节点 */
   parentNode: (node) => node.parentNode,
+  /** 下一个兄弟节点，如果改节点为最后一个节点，返回 null */
   nextSibling: (node) => node.nextSibling,
+  /** 选择元素 */
   querySelector: (selector) => doc.querySelector(selector),
+  /** 设置 css ScopeId */
   setScopeId(el, id) {
     el.setAttribute(id, '');
   },
+  /** 克隆节点 */
   cloneNode(el) {
     const cloned = el.cloneNode(true);
 

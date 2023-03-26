@@ -97,6 +97,7 @@ function baseCreateRenderer(options) {
         break
       default:
         if (shapeFlag & 1) {
+          // 普通元素节点
           processElement(
             n1,
             n2,
@@ -108,7 +109,7 @@ function baseCreateRenderer(options) {
             slotScopeIds
           )
         } else if (shapeFlag & 6) {
-          //
+          // 普通组件 (函数组件 2/有状态组件 4)
           processComponent(
             n1,
             n2,
@@ -120,6 +121,7 @@ function baseCreateRenderer(options) {
             slotScopeIds
           )
         } else if (shapeFlag & 64) {
+          // TELEPORT 组件
           type.process(
             n1,
             n2,
@@ -132,6 +134,7 @@ function baseCreateRenderer(options) {
             internals
           )
         } else if (shapeFlag & 128) {
+          // SUSPENSE 组件
           type.process(
             n1,
             n2,
@@ -145,6 +148,7 @@ function baseCreateRenderer(options) {
           )
         }
     }
+    // <h1 h1 ref='el'> </h1> dom ref
     if (ref != null && parentComponent) {
       setRef(ref, n1 && n1.ref, parentSuspense, n2 || n1, !n2)
     }
@@ -1331,12 +1335,15 @@ function baseCreateRenderer(options) {
     }
   }
   const getNextHostNode = vnode => {
+    // 组件 
     if (vnode.shapeFlag & 6) {
       return getNextHostNode(vnode.component.subTree)
     }
+    // suspense组件
     if (vnode.shapeFlag & 128) {
       return vnode.suspense.next()
     }
+    // html 元素
     return hostNextSibling(vnode.anchor || vnode.el)
   }
   const render = (vnode, container, isSVG) => {
