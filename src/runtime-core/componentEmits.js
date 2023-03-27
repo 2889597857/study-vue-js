@@ -2,22 +2,27 @@ import {
   camelize,
   EMPTY_OBJ,
   hasOwn,
+  hyphenate,
   isArray,
   isFunction,
   isOn,
-  toHandlerKey
+  toHandlerKey,
+  toNumber
 } from '../shared/index.js';
 export function emit(instance, event, ...rawArgs) {
   const props = instance.vnode.props || EMPTY_OBJ;
 
   let args = rawArgs;
+  // 处理 v-model
   const isModelListener = event.startsWith('update:');
   // for v-model update:xxx events, apply modifiers on args
+  // modelArg xxx 默认值为 modelValue
   const modelArg = isModelListener && event.slice(7);
   if (modelArg && modelArg in props) {
     const modifiersKey = `${
       modelArg === 'modelValue' ? 'model' : modelArg
     }Modifiers`;
+    // 修饰符 .lazy .number .trim
     const { number, trim } = props[modifiersKey] || EMPTY_OBJ;
     if (trim) {
       args = rawArgs.map((a) => a.trim());
@@ -28,19 +33,23 @@ export function emit(instance, event, ...rawArgs) {
 
   let handlerName;
   let handler =
+    // click => onClick
     props[(handlerName = toHandlerKey(event))] ||
-    // also try camelCase event handler (#2249)
+    // on-click => onClick
     props[(handlerName = toHandlerKey(camelize(event)))];
   // for v-model update:xxx events, also trigger kebab-case equivalent
   // for props passed via kebab-case
   if (!handler && isModelListener) {
+    // update:modelValue => onUpdate:model-value
     handler = props[(handlerName = toHandlerKey(hyphenate(event)))];
   }
   if (handler) {
     handler([...args]);
   }
+  // onClickOnce 只执行一次
   const onceHandler = props[handlerName + `Once`];
   if (onceHandler) {
+    // 缓存避免多次执行
     if (!instance.emitted) {
       instance.emitted = {};
     } else if (instance.emitted[handlerName]) {

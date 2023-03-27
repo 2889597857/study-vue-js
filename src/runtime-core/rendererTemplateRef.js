@@ -12,7 +12,7 @@ import { getExposeProxy } from './component.js'
 import { queuePostRenderEffect } from './renderer.js'
 
 /**
- * Function for handling a template ref
+ * 处理模板引用
  * 
  * @param { f:boolean,i:component,k,r} rawRef
  */
