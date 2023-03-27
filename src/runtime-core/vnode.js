@@ -1,4 +1,4 @@
-import { isProxy } from '../reactivity/index.js';
+import { isProxy, isRef } from '../reactivity/index.js';
 import {
   EMPTY_ARR,
   extend,
@@ -328,6 +328,7 @@ export function createTextVNode(text = ' ', flag = 0) {
   return createVNode(Text, null, text, flag);
 }
 export function createStaticVNode(content, numberOfNodes) {
+  // "<h1>hello</h1><h1>hello</h1><h1>hello</h1><h1>hello</h1>"
   const vnode = createVNode(Static, null, content);
   vnode.staticCount = numberOfNodes;
   return vnode;
