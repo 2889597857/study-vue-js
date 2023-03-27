@@ -21,6 +21,7 @@ export function withCtx (fn, ctx = currentRenderingInstance, isNonScopedSlot) {
     return fn
   }
   const renderFnWithContext = (...args) => {
+    console.log('renderFnWithContext');
     if (renderFnWithContext._d) {
       setBlockTracking(-1)
     }

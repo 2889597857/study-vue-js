@@ -277,11 +277,6 @@ function genNodeList(nodes, context, multilines = false, comma = true) {
   }
 }
 function genNode(node, context) {
-  if (node.codegenNode) {
-    console.log(node.codegenNode);
-    console.log(context);
-    console.log(node.type);
-  }
   if (isString(node)) {
     context.push(node);
     return;

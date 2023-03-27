@@ -25,23 +25,33 @@ export const Comment = Symbol('Comment');
 export const Static = Symbol('Static');
 export { createBaseVNode as createElementVNode };
 
+/** 
+ * Vue 会把组件内的第一个根元素作为 Block,多个根元素包装成 Fragment Block
+ * 动态节点栈：临时存储内层的动态节点
+ * 每一层代表一个子节点
+ * createElementBlock(...,[子节点1,子节点2...])
+ * [ [vnode] , null ]
+ */
 export const blockStack = [];
 export let currentBlock = null;
 
+// 创建一个新的动态节点集合
 export function openBlock(disableTracking = false) {
   blockStack.push((currentBlock = disableTracking ? null : []));
 }
 
+// 出栈
 export function closeBlock() {
   blockStack.pop();
   currentBlock = blockStack[blockStack.length - 1] || null;
 }
-
+/** 是否暂停动态结点的收集 */
 export let isBlockTreeEnabled = 1;
 
 export function setBlockTracking(value) {
   isBlockTreeEnabled += value;
 }
+// 收集动态结点 节点栈
 export function setupBlock(vnode) {
   vnode.dynamicChildren =
     isBlockTreeEnabled > 0 ? currentBlock || EMPTY_ARR : null;
@@ -110,7 +120,7 @@ const normalizeRef = ({ ref, ref_key, ref_for }) => {
 };
 /**
  * 创建 baseVNoe
- * @param {object | string} type
+ * @param {object | string | Symbol} type string 普通元素标签 p h1 , object 组件
  * @param {object} props
  * @param {object} children
  * @param {number} patchFlag
@@ -173,6 +183,7 @@ export function createBaseVNode(
     (vnode.patchFlag > 0 || shapeFlag & 6) &&
     vnode.patchFlag !== 32
   ) {
+    console.log(vnode);
     currentBlock.push(vnode);
   }
   return vnode;
