@@ -85,6 +85,8 @@ export function createComponentInstance(vnode, parent, suspense) {
     emitsOptions: normalizeEmitsOptions(type, appContext),
     // 派发事件方法
     emit: null,
+    // .once 修饰符,只执行一次
+    // { eventName:Boolean }
     emitted: null,
     propsDefaults: EMPTY_OBJ,
     inheritAttrs: type.inheritAttrs,
@@ -176,7 +178,7 @@ export const unsetCurrentInstance = () => {
   currentInstance = null;
 };
 /**
- * 判断是否是一个有状态的组件(函数组件)
+ * 判断是否是一个有状态的组件
  * @param {object} instance
  * @returns
  */
@@ -278,7 +280,7 @@ function finishComponentSetup(instance) {
         // console.log(Component.render)
       }
     }
-    console.log(instance)
+    console.log(instance);
     instance.render = Component.render || NOOP;
     console.log(instance.render);
     if (installWithProxy) {
@@ -299,7 +301,6 @@ function finishComponentSetup(instance) {
 export function createAttrsProxy(instance) {
   return new Proxy(instance.attrs, {
     get(target, key) {
-      markAttrsAccessed();
       track(instance, 'get', '$attrs');
       return target[key];
     },
@@ -338,6 +339,11 @@ export function getExposeProxy(instance) {
   }
 }
 const classifyRE = /(?:^|[-_])(\w)/g;
+/**
+ * 格式化组件名称 aa-bb/aa_bb/AaBb => AaBb
+ * @param {*} str
+ * @returns
+ */
 const classify = (str) =>
   str.replace(classifyRE, (c) => c.toUpperCase()).replace(/[-_]/g, '');
 
@@ -346,6 +352,13 @@ export function getComponentName(Component) {
     ? Component.displayName || Component.name
     : Component.name;
 }
+/**
+ * 格式组件名称
+ * @param {*} instance
+ * @param {*} Component
+ * @param {*} isRoot
+ * @returns
+ */
 export function formatComponentName(instance, Component, isRoot = false) {
   let name = getComponentName(Component);
   if (!name && Component.__file) {
