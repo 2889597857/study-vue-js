@@ -26,23 +26,23 @@ ReactiveFlags = {
 
 PatchFlags = {
   // 表示vnode具有动态textContent的元素
-  TEXT : 1,
+  TEXT : 1, // 1
   // 表示vnode具有动态的class
-  CLASS : 1 << 1,
+  CLASS : 1 << 1,// 2
   // 表示具有动态的style
-  STYLE : 1 << 2,
+  STYLE : 1 << 2,// 4
   // 表示具有动态的非class和style的props
-  PROPS : 1 << 3,
+  PROPS : 1 << 3,// 8
   // 表示props具有动态的key，与CLASS、STYLE、PROPS冲突
-  FULL_PROPS : 1 << 4,
+  FULL_PROPS : 1 << 4,// 16
   // 表示有监听事件(在同构期间需要添加)
-  HYDRATE_EVENTS : 1 << 5,
+  HYDRATE_EVENTS : 1 << 5,// 32
   // 表示vnode是个children顺序不会改变的fragment
-  STABLE_FRAGMENT : 1 << 6,
+  STABLE_FRAGMENT : 1 << 6,// 64
   // 表示children带有key的fragment
-  KEYED_FRAGMENT : 1 << 7,
+  KEYED_FRAGMENT : 1 << 7,// 128
   // 表示children没有key的fragment
-  UNKEYED_FRAGMENT : 1 << 8,
+  UNKEYED_FRAGMENT : 1 << 8,// 256
   // 表示vnode只需要非props的patch。例如只有标签中只有ref或指令
   NEED_PATCH : 1 << 9,
   // 表示vnode存在动态的插槽。例如动态的插槽名

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>DOM　REF</title>
+
+</head>
+
+<body>
+  <div id="app">
+   <p>123</p> 
+   <p>{{a}}</p>
+  </div>
+  <script type="module">
+    import {createApp, ref, reactive, computed, watch, toRefs} from "../src/index.js"
+      //  import { createApp, ref, reactive, computed, watch, toRefs}  from '../vue.global.js';
+    const app = createApp({
+      setup() {
+        const a= ref('msg')
+        return { a}
+      },
+    })
+ 
+    app.mount("#app")
+  </script>
+</body>
+
+</html>

@@ -2,7 +2,7 @@ import {
   isArray, isFunction, isMap,
   isObject, isPlainObject,
   isSet, isString, objectToString
-} from './index.js'
+} from './index.js';
 
 export const toDisplayString = val => {
   // val 是不是字符串  是,返回 val
