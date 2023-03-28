@@ -8,15 +8,14 @@
 
 <body>
   <div id="app">
-   <p>123</p> 
-   <p>{{a}}</p>
+   <p :msg="a" a="asfas" style="color: #000;" :class="{msg:msg}"  class="class-a">{{a}}</p>
   </div>
   <script type="module">
     import {createApp, ref, reactive, computed, watch, toRefs} from "../src/index.js"
       //  import { createApp, ref, reactive, computed, watch, toRefs}  from '../vue.global.js';
     const app = createApp({
       setup() {
-        const a= ref('msg')
+        const a= ref('msgValue')
         return { a}
       },
     })

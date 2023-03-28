@@ -26,7 +26,7 @@ export function renderComponentRoot(instance) {
   let result
   let fallthroughAttrs
   const prev = setCurrentRenderingInstance(instance)
-  // console.log(render)
+  console.log(render)
   try {
     if (vnode.shapeFlag & 4) {
       const proxyToUse = withProxy || proxy
@@ -104,7 +104,11 @@ export function filterSingleRoot(children) {
   }
   return singleRoot
 }
-
+/**
+ * 过滤 class style on开头的事件
+ * @param {*} attrs 
+ * @returns 
+ */
 const getFunctionalFallthrough = attrs => {
   let res
   for (const key in attrs) {
