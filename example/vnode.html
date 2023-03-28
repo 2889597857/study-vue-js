@@ -8,18 +8,27 @@
 
 <body>
   <div id="app">
-   <p :msg="a" a="asfas" style="color: #000;" :class="{msg:msg}"  class="class-a">{{a}}</p>
+    <component-a :class="[ 'class-a', { 'class-b' : show } ]" :style="{ 'font-size' : '24px', color : color }" :a="a" b="b" />
   </div>
   <script type="module">
-    import {createApp, ref, reactive, computed, watch, toRefs} from "../src/index.js"
-      //  import { createApp, ref, reactive, computed, watch, toRefs}  from '../vue.global.js';
+    import { createApp, ref, reactive, computed, watch, toRefs } from "../src/index.js"
+    //  import { createApp, ref, reactive, computed, watch, toRefs}  from '../vue.global.js';
+    const componentA = {
+      template: '<h1>{{a}}</h1>',
+      props:['a']
+    }
+   
     const app = createApp({
+      components: { componentA },
       setup() {
-        const a= ref('msgValue')
-        return { a}
+        const a = ref('msgValue')
+        const show = ref(true)
+
+        const color = ref('#21ad')
+        return { a, show, color }
       },
     })
- 
+
     app.mount("#app")
   </script>
 </body>

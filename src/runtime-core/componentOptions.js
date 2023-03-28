@@ -1,15 +1,7 @@
-import {
-  isFunction,
-  extend,
-  isString,
-  isObject,
-  isArray,
-  NOOP,
-  isPromise
-  // LooseRequired,
-  // UnionToIntersection
-} from '../shared/index.js'
 import { isRef, reactive } from '../reactivity/index.js'
+import {
+  extend, isArray, isFunction, isObject, isString, NOOP
+} from '../shared/index.js'
 function createDuplicateChecker () {
   const cache = Object.create(null)
   return (type, key) => {

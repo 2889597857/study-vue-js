@@ -38,7 +38,7 @@ export function createComponentInstance(vnode, parent, suspense) {
   //   setup
   //   ...
   // }
-
+  console.log('createComponentInstance');
   // 继承父组件appContext
   // 如果是是根组件，从vnode上获取appContext
   const appContext =

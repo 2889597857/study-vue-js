@@ -1,6 +1,6 @@
-import { isObject, isFunction, NO } from '../shared/index.js'
-import { createVNode } from './vnode.js'
+import { isFunction, isObject, NO } from '../shared/index.js'
 import { getExposeProxy } from './component.js'
+import { createVNode } from './vnode.js'
 
 export function createAppContext () {
   return {
@@ -25,6 +25,7 @@ export function createAppContext () {
 }
 let uid = 0
 export function createAppAPI (render) {
+  // 创建根组件(app组件/app实例)
   return function createApp (rootComponent, rootProps = null) {
     // 跟组件属性必须是对象/null
     if (rootProps != null && !isObject(rootProps)) {

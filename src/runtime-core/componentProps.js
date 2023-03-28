@@ -151,8 +151,8 @@ export function updateProps(instance, rawProps, rawPrevProps, optimized) {
 }
 function setFullProps(instance, rawProps, props, attrs) {
   const [options, needCastKeys] = instance.propsOptions;
-  // console.log(instance.propsOptions);
-  // console.log(instance.emitsOptions);
+  console.log(instance.propsOptions);
+  console.log(instance.emitsOptions);
 
   let hasAttrsChanged = false;
   let rawCastValues;
