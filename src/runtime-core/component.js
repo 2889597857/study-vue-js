@@ -76,6 +76,11 @@ export function createComponentInstance(vnode, parent, suspense) {
     //  获取 parent 的 provides 作为当前组件的初始化值
     provides: parent ? parent.provides : Object.create(appContext.provides),
     // 渲染代理的属性访问缓存
+    // {'key':0,'key':1,...}
+    // key 为访问的属性名
+    // 访问的属性可能在 setup 中，也可能在 prop 中
+    // 1 代表属性在 setup 中
+    // 3 代表属性在 prop 中
     accessCache: null,
     // 渲染缓存
     renderCache: [],
